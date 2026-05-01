@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import { Sun, Moon, Plus, Trash2, ArrowLeft, Download, FileText } from 'lucide-react';
 import './index.css';
 
@@ -134,28 +136,36 @@ function App() {
     const wasDark = document.documentElement.classList.contains('dark');
     if (wasDark) document.documentElement.classList.remove('dark');
 
-    const opt = {
-      margin: 10,
-      filename: `Service-Report-${formData.reportNumber || '0000'}.pdf`,
-      image: { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    };
-
     try {
-      // Dynamic import to fix production build issue and reduce chunk size
-      const html2pdfModule = await import('html2pdf.js');
-      const html2pdf = html2pdfModule.default || html2pdfModule;
+      // Tunggu sebentar agar transisi mode light selesai dan dirender
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const canvas = await html2canvas(previewElement, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
       
-      setTimeout(() => {
-        html2pdf().from(previewElement).set(opt).save().then(() => {
-          if (wasDark) document.documentElement.classList.add('dark');
-        });
-      }, 100);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      // Mengkalkulasi tinggi gambar di PDF berdasarkan rasio canvas
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Service-Report-${formData.reportNumber || '0000'}.pdf`);
+
     } catch (error) {
       console.error("Error generating PDF:", error);
       alert("Maaf, terjadi kesalahan saat membuat PDF.");
+    } finally {
       if (wasDark) document.documentElement.classList.add('dark');
     }
   };
