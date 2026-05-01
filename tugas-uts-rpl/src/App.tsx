@@ -8,23 +8,23 @@ import ReportModal from './components/ReportModal';
 import CustomerPage from './components/Customer';
 
 const initialMeasurements: MeasurementData[] = [
-  { id: '1', parameter: 'Voltage (R-S)', unit: 'V', reference: '380-410V', before: '-', after: '405 Volt' },
-  { id: '2', parameter: 'Voltage (S-T)', unit: 'V', reference: '380-410V', before: '-', after: '402 Volt' },
-  { id: '3', parameter: 'Voltage (R-T)', unit: 'V', reference: '380-410V', before: '-', after: '404 Volt' },
-  { id: '4', parameter: 'Ampere Total', unit: 'A', reference: '-', before: '-', after: '27 Amp' },
-  { id: '5', parameter: 'Ampere Comp', unit: 'A', reference: '-', before: '-', after: '32 Amp' },
-  { id: '6', parameter: 'Pipa Discharge', unit: '°C', reference: '+20-25°C', before: '-', after: '83°C' },
-  { id: '7', parameter: 'Pipa Hisap', unit: '°C', reference: '+2-8°C', before: '-', after: '12.1°C' },
-  { id: '8', parameter: 'Low Pressure', unit: 'Mpa', reference: '0.5-1.1', before: '-', after: '1.00' },
-  { id: '9', parameter: 'High Pressure', unit: 'Mpa', reference: '2.1-3.3', before: '-', after: '3.80' }
+  { id: '1', parameter: 'Voltage (R-S)', unit: 'V', reference: '380-410V', before: '', after: '' },
+  { id: '2', parameter: 'Voltage (S-T)', unit: 'V', reference: '380-410V', before: '', after: '' },
+  { id: '3', parameter: 'Voltage (R-T)', unit: 'V', reference: '380-410V', before: '', after: '' },
+  { id: '4', parameter: 'Ampere Total', unit: 'A', reference: '-', before: '', after: '' },
+  { id: '5', parameter: 'Ampere Comp', unit: 'A', reference: '-', before: '', after: '' },
+  { id: '6', parameter: 'Pipa Discharge', unit: '°C', reference: '+20-25°C', before: '', after: '' },
+  { id: '7', parameter: 'Pipa Hisap', unit: '°C', reference: '+2-8°C', before: '', after: '' },
+  { id: '8', parameter: 'Low Pressure', unit: 'Mpa', reference: '0.5-1.1', before: '', after: '' },
+  { id: '9', parameter: 'High Pressure', unit: 'Mpa', reference: '2.1-3.3', before: '', after: '' }
 ];
 
 function App() {
   const [formData, setFormData] = useState<FormData>({
     indoorModel: '', indoorSerial: '', outdoorModel: '', outdoorSerial: '',
     customerName: '', address: '', technicianName: '', reportNumber: '',
-    errorCode: '', failureCause: '46. KABEL ANTARA PCB TIDAK TERHUBUNG DENGAN BAIK',
-    operationMode: 'Cool', setTemp: '', diagnosis: '', checkingResult: '',
+    errorCode: '', failureCause: '',
+    operationMode: '', setTemp: '', diagnosis: '', checkingResult: '',
     countermeasure: '', reportDate: new Date().toISOString().split('T')[0]
   });
 
@@ -50,14 +50,7 @@ function App() {
     document.documentElement.classList.toggle('dark', isDarkMode);
   }, [isDarkMode]);
 
-  useEffect(() => {
-    setFormData(prev => ({
-      ...prev, indoorModel: 'FXQ20BY14', outdoorModel: 'RXQ20BY14',
-      outdoorSerial: 'E000580', customerName: 'BPK MT Haryono',
-      address: 'South Jakarta Office', technicianName: 'Iwan Saputra',
-      reportNumber: '00133772', errorCode: 'U7', setTemp: '17',
-    }));
-  }, []);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }));
@@ -230,6 +223,7 @@ function App() {
                 <div className="form-group">
                   <label className="form-label text-sage-700 dark:text-sage-300">Cause of Failure</label>
                   <select id="failureCause" value={formData.failureCause} onChange={handleChange} className={inputCls + " cursor-pointer"}>
+                    <option value="" disabled>Pilih penyebab...</option>
                     <option value="46. KABEL ANTARA PCB TIDAK TERHUBUNG DENGAN BAIK">46. Kabel antara PCB tidak terhubung</option>
                     <option value="726. Konektor Kabel Listrik, Kabel [Komponen Listrik]">726. Konektor Kabel Listrik</option>
                     <option value="Lainnya">Lainnya</option>
@@ -238,6 +232,7 @@ function App() {
                 <div className="form-group">
                   <label className="form-label text-sage-700 dark:text-sage-300">Mode Operasi</label>
                   <select id="operationMode" value={formData.operationMode} onChange={handleChange} className={inputCls + " cursor-pointer"}>
+                    <option value="" disabled>Pilih mode...</option>
                     <option value="Cool">❄️ Cool</option>
                     <option value="Heat">🔥 Heat</option>
                     <option value="Auto">🔄 Auto</option>
