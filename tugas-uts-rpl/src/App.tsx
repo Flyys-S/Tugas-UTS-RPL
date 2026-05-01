@@ -3,31 +3,14 @@ import { Sun, Moon, Plus, Trash2, ArrowLeft, Download, FileText } from 'lucide-r
 import './index.css';
 
 interface MeasurementData {
-  id: string;
-  parameter: string;
-  unit: string;
-  reference: string;
-  before: string;
-  after: string;
+  id: string; parameter: string; unit: string; reference: string; before: string; after: string;
 }
 
 interface FormData {
-  indoorModel: string;
-  indoorSerial: string;
-  outdoorModel: string;
-  outdoorSerial: string;
-  customerName: string;
-  address: string;
-  technicianName: string;
-  reportNumber: string;
-  errorCode: string;
-  failureCause: string;
-  operationMode: string;
-  setTemp: string;
-  diagnosis: string;
-  checkingResult: string;
-  countermeasure: string;
-  reportDate: string;
+  indoorModel: string; indoorSerial: string; outdoorModel: string; outdoorSerial: string;
+  customerName: string; address: string; technicianName: string; reportNumber: string;
+  errorCode: string; failureCause: string; operationMode: string; setTemp: string;
+  diagnosis: string; checkingResult: string; countermeasure: string; reportDate: string;
 }
 
 const initialMeasurements: MeasurementData[] = [
@@ -44,22 +27,11 @@ const initialMeasurements: MeasurementData[] = [
 
 function App() {
   const [formData, setFormData] = useState<FormData>({
-    indoorModel: '',
-    indoorSerial: '',
-    outdoorModel: '',
-    outdoorSerial: '',
-    customerName: '',
-    address: '',
-    technicianName: '',
-    reportNumber: '',
-    errorCode: '',
-    failureCause: '46. KABEL ANTARA PCB TIDAK TERHUBUNG DENGAN BAIK',
-    operationMode: 'Cool',
-    setTemp: '',
-    diagnosis: '',
-    checkingResult: '',
-    countermeasure: '',
-    reportDate: new Date().toISOString().split('T')[0]
+    indoorModel: '', indoorSerial: '', outdoorModel: '', outdoorSerial: '',
+    customerName: '', address: '', technicianName: '', reportNumber: '',
+    errorCode: '', failureCause: '46. KABEL ANTARA PCB TIDAK TERHUBUNG DENGAN BAIK',
+    operationMode: 'Cool', setTemp: '', diagnosis: '', checkingResult: '',
+    countermeasure: '', reportDate: new Date().toISOString().split('T')[0]
   });
 
   const [measurements, setMeasurements] = useState<MeasurementData[]>(initialMeasurements);
@@ -68,34 +40,21 @@ function App() {
   const [formError, setFormError] = useState('');
   const previewRef = useRef<HTMLDivElement>(null);
 
-  // Apply dark mode to document
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.classList.toggle('dark', isDarkMode);
   }, [isDarkMode]);
 
-  // Pre-fill data
   useEffect(() => {
     setFormData(prev => ({
-      ...prev,
-      indoorModel: 'FXQ20BY14',
-      outdoorModel: 'RXQ20BY14',
-      outdoorSerial: 'E000580',
-      customerName: 'BPK MT Haryono',
-      address: 'South Jakarta Office',
-      technicianName: 'Iwan Saputra',
-      reportNumber: '00133772',
-      errorCode: 'U7',
-      setTemp: '17',
+      ...prev, indoorModel: 'FXQ20BY14', outdoorModel: 'RXQ20BY14',
+      outdoorSerial: 'E000580', customerName: 'BPK MT Haryono',
+      address: 'South Jakarta Office', technicianName: 'Iwan Saputra',
+      reportNumber: '00133772', errorCode: 'U7', setTemp: '17',
     }));
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
+    setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }));
     if (formError) setFormError('');
   };
 
@@ -104,8 +63,7 @@ function App() {
   };
 
   const addMeasurementRow = () => {
-    const newId = Date.now().toString();
-    setMeasurements(prev => [...prev, { id: newId, parameter: '', unit: '', reference: '', before: '', after: '' }]);
+    setMeasurements(prev => [...prev, { id: Date.now().toString(), parameter: '', unit: '', reference: '', before: '', after: '' }]);
   };
 
   const removeMeasurementRow = (id: string) => {
@@ -123,161 +81,145 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const backToForm = () => {
-    setShowPreview(false);
-  };
+  const todayStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  const downloadPDF = () => {
-    // Menggunakan fitur native Print browser
-    window.print();
-  };
-
-  const InputLabel = ({ htmlFor, children, required }: { htmlFor: string, children: React.ReactNode, required?: boolean }) => (
-    <label htmlFor={htmlFor} className="block text-sm font-semibold text-sage-900 dark:text-sage-100 mb-1">
-      {children} {required && <span className="text-red-500">*</span>}
-    </label>
-  );
+  const inputCls = "form-input bg-sage-50 dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-800 text-sage-900 dark:text-sage-100 focus:border-sage-500";
+  const textareaCls = `${inputCls} form-textarea`;
 
   return (
-    <div className="min-h-screen bg-sage-100 dark:bg-sage-950 text-sage-900 dark:text-sage-50 transition-colors duration-300 py-8 px-4 sm:px-6 lg:px-8 print:py-0 print:px-0 print:bg-white">
-      <div className="max-w-5xl mx-auto bg-white dark:bg-sage-900 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300 print:shadow-none print:rounded-none print:max-w-none">
-        
-        {/* HEADER */}
-        <div className="bg-sage-700 dark:bg-sage-800 p-8 text-center relative border-b border-transparent dark:border-sage-800 print:hidden">
-          <button 
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-          >
-            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center justify-center gap-3">
-            <FileText size={32} /> Service Report Generator
-          </h1>
-          <p className="text-sage-100 text-sm">Buat laporan service AC profesional dengan mudah</p>
-        </div>
+    <div className="min-h-screen bg-sage-100 dark:bg-sage-950 text-sage-900 dark:text-sage-50 transition-colors duration-300 print:bg-white">
 
-        {/* FORM SECTION */}
+      {/* ===== SIDEBAR ===== */}
+      <aside className="sidebar print:hidden">
+        <div className="sidebar-logo">
+          <div className="logo-badge">MMS</div>
+          <div className="logo-text">
+            <span className="logo-main">Mitra Maju</span>
+            <span className="logo-sub">Sejati</span>
+          </div>
+        </div>
+        <nav className="sidebar-nav">
+          <div className="nav-label">Menu</div>
+          <button className="nav-item active"><span className="nav-icon">📋</span><span>Service Report</span></button>
+          <button className="nav-item"><span className="nav-icon">📁</span><span>Riwayat</span></button>
+          <button className="nav-item"><span className="nav-icon">🔧</span><span>Unit</span></button>
+          <button className="nav-item"><span className="nav-icon">👤</span><span>Customer</span></button>
+        </nav>
+        <div className="sidebar-footer">
+          <div className="sidebar-version">v2.0.0</div>
+        </div>
+      </aside>
+
+      {/* ===== MAIN AREA ===== */}
+      <main className="main-area">
+
+        {/* TOPBAR */}
+        <header className="topbar bg-white dark:bg-sage-900 border-b-[1.5px] border-sage-300 dark:border-sage-800 print:hidden">
+          <div>
+            <h1 className="page-title text-sage-900 dark:text-white">
+              Service Report Generator <span className="page-title-tag">MMS</span>
+            </h1>
+            <p className="page-subtitle text-sage-500">Buat laporan servis AC profesional dalam hitungan detik</p>
+          </div>
+          <div className="topbar-right">
+            <div className="date-badge bg-sage-50 dark:bg-sage-800 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-700 dark:text-sage-200">{todayStr}</div>
+            <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2.5 rounded-full bg-sage-200 dark:bg-sage-800 hover:bg-sage-300 dark:hover:bg-sage-700 text-sage-700 dark:text-sage-200 transition-colors">
+              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+          </div>
+        </header>
+
+        {/* ===== FORM SECTION ===== */}
         {!showPreview && (
-          <div className="p-8">
-            <h2 className="text-2xl font-bold text-sage-900 dark:text-white mb-6 border-b pb-2 dark:border-sage-800 border-sage-300">📋 Form Data Service</h2>
+          <section className="form-section">
 
             {formError && (
-              <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 text-red-700 dark:text-red-400 font-medium flex items-center gap-2">
+              <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 text-red-700 dark:text-red-400 font-medium flex items-center gap-2">
                 <span className="text-xl">⚠️</span> {formError}
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {/* Unit Info */}
-              <div className="col-span-1 md:col-span-2 lg:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <InputLabel htmlFor="indoorModel" required>Model Indoor</InputLabel>
-                  <input type="text" id="indoorModel" value={formData.indoorModel} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <InputLabel htmlFor="indoorSerial">SN Indoor</InputLabel>
-                  <input type="text" id="indoorSerial" value={formData.indoorSerial} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <InputLabel htmlFor="outdoorModel" required>Model Outdoor</InputLabel>
-                  <input type="text" id="outdoorModel" value={formData.outdoorModel} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <InputLabel htmlFor="outdoorSerial">SN Outdoor</InputLabel>
-                  <input type="text" id="outdoorSerial" value={formData.outdoorSerial} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all" />
-                </div>
+            {/* Card: Informasi Unit */}
+            <div className="dash-card bg-white dark:bg-sage-900 border-[1.5px] border-sage-300 dark:border-sage-800">
+              <div className="card-header border-b-[1.5px] border-sage-100 dark:border-sage-800">
+                <div className="card-icon bg-sage-50 dark:bg-sage-800 border-[1.5px] border-sage-200 dark:border-sage-700">🖥️</div>
+                <div><div className="card-title text-sage-900 dark:text-white">Informasi Unit</div><div className="card-desc text-sage-500">Model dan serial number perangkat</div></div>
               </div>
-
-              {/* Customer Info */}
-              <div className="col-span-1 md:col-span-2 lg:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <InputLabel htmlFor="customerName" required>Nama Customer</InputLabel>
-                  <input type="text" id="customerName" value={formData.customerName} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all" />
-                </div>
-                <div className="md:col-span-2">
-                  <InputLabel htmlFor="address">Alamat</InputLabel>
-                  <input type="text" id="address" value={formData.address} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <InputLabel htmlFor="technicianName">Teknisi</InputLabel>
-                  <input type="text" id="technicianName" value={formData.technicianName} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all" />
-                </div>
+              <div className="form-grid col-4">
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Model Indoor Unit</label><input type="text" id="indoorModel" value={formData.indoorModel} onChange={handleChange} className={inputCls} placeholder="FXQ20BY14" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Serial Number Indoor</label><input type="text" id="indoorSerial" value={formData.indoorSerial} onChange={handleChange} className={inputCls} placeholder="E000580" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Model Outdoor Unit</label><input type="text" id="outdoorModel" value={formData.outdoorModel} onChange={handleChange} className={inputCls} placeholder="RXQ20BY14" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Serial Number Outdoor</label><input type="text" id="outdoorSerial" value={formData.outdoorSerial} onChange={handleChange} className={inputCls} placeholder="E000580" /></div>
               </div>
+            </div>
 
-              {/* Settings */}
-              <div className="col-span-1 md:col-span-2 lg:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <InputLabel htmlFor="reportNumber" required>No Laporan</InputLabel>
-                  <input type="text" id="reportNumber" value={formData.reportNumber} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <InputLabel htmlFor="reportDate">Tanggal Pekerjaan</InputLabel>
-                  <input type="date" id="reportDate" value={formData.reportDate} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <InputLabel htmlFor="errorCode">Error Code</InputLabel>
-                  <input type="text" id="errorCode" value={formData.errorCode} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <InputLabel htmlFor="setTemp">Setting Temp (°C)</InputLabel>
-                  <input type="text" id="setTemp" value={formData.setTemp} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all" />
-                </div>
+            {/* Card: Informasi Customer */}
+            <div className="dash-card bg-white dark:bg-sage-900 border-[1.5px] border-sage-300 dark:border-sage-800">
+              <div className="card-header border-b-[1.5px] border-sage-100 dark:border-sage-800">
+                <div className="card-icon bg-sage-50 dark:bg-sage-800 border-[1.5px] border-sage-200 dark:border-sage-700">👤</div>
+                <div><div className="card-title text-sage-900 dark:text-white">Informasi Customer</div><div className="card-desc text-sage-500">Data pelanggan dan teknisi</div></div>
               </div>
+              <div className="form-grid col-4">
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Nama Customer</label><input type="text" id="customerName" value={formData.customerName} onChange={handleChange} className={inputCls} placeholder="BPK MT Haryono" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Alamat</label><input type="text" id="address" value={formData.address} onChange={handleChange} className={inputCls} placeholder="South Jakarta Office" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Nama Teknisi</label><input type="text" id="technicianName" value={formData.technicianName} onChange={handleChange} className={inputCls} placeholder="Iwan Saputra" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">No Laporan</label><input type="text" id="reportNumber" value={formData.reportNumber} onChange={handleChange} className={inputCls} placeholder="00133772" /></div>
+              </div>
+            </div>
 
-              {/* Selects */}
-              <div className="col-span-1 md:col-span-2 lg:col-span-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <InputLabel htmlFor="failureCause">Cause of Failure</InputLabel>
-                  <select id="failureCause" value={formData.failureCause} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all">
-                    <option value="46. KABEL ANTARA PCB TIDAK TERHUBUNG DENGAN BAIK">46. KABEL ANTARA PCB TIDAK TERHUBUNG DENGAN BAIK</option>
+            {/* Card: Detail Kerusakan */}
+            <div className="dash-card bg-white dark:bg-sage-900 border-[1.5px] border-sage-300 dark:border-sage-800">
+              <div className="card-header border-b-[1.5px] border-sage-100 dark:border-sage-800">
+                <div className="card-icon bg-sage-50 dark:bg-sage-800 border-[1.5px] border-sage-200 dark:border-sage-700">⚠️</div>
+                <div><div className="card-title text-sage-900 dark:text-white">Detail Kerusakan</div><div className="card-desc text-sage-500">Error code dan penyebab kerusakan</div></div>
+              </div>
+              <div className="form-grid col-4">
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Error Code</label><input type="text" id="errorCode" value={formData.errorCode} onChange={handleChange} className={inputCls} placeholder="U7" /></div>
+                <div className="form-group">
+                  <label className="form-label text-sage-700 dark:text-sage-300">Cause of Failure</label>
+                  <select id="failureCause" value={formData.failureCause} onChange={handleChange} className={inputCls + " cursor-pointer"}>
+                    <option value="46. KABEL ANTARA PCB TIDAK TERHUBUNG DENGAN BAIK">46. Kabel antara PCB tidak terhubung</option>
                     <option value="726. Konektor Kabel Listrik, Kabel [Komponen Listrik]">726. Konektor Kabel Listrik</option>
                     <option value="Lainnya">Lainnya</option>
                   </select>
                 </div>
-                <div>
-                  <InputLabel htmlFor="operationMode">Mode Operasi</InputLabel>
-                  <select id="operationMode" value={formData.operationMode} onChange={handleChange} className="w-full p-2.5 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all">
-                    <option value="Cool">Cool</option>
-                    <option value="Heat">Heat</option>
-                    <option value="Auto">Auto</option>
+                <div className="form-group">
+                  <label className="form-label text-sage-700 dark:text-sage-300">Mode Operasi</label>
+                  <select id="operationMode" value={formData.operationMode} onChange={handleChange} className={inputCls + " cursor-pointer"}>
+                    <option value="Cool">❄️ Cool</option>
+                    <option value="Heat">🔥 Heat</option>
+                    <option value="Auto">🔄 Auto</option>
                   </select>
                 </div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Setting Temp (°C)</label><input type="text" id="setTemp" value={formData.setTemp} onChange={handleChange} className={inputCls} placeholder="17" /></div>
               </div>
             </div>
 
-            {/* Dynamic Measurement Table Form */}
-            <div className="mb-8 bg-sage-100 dark:bg-sage-950 p-6 rounded-xl border border-sage-300 dark:border-sage-800">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold text-sage-900 dark:text-white">📊 Tabel Pengukuran (Dinamis)</h3>
-                <button onClick={addMeasurementRow} className="flex items-center gap-1 text-sm bg-sage-300 hover:bg-sage-500 hover:text-white text-sage-900 dark:bg-sage-800/60 dark:hover:bg-sage-700/60 dark:text-sage-300 py-1.5 px-3 rounded-lg transition-colors">
+            {/* Card: Tabel Pengukuran */}
+            <div className="dash-card bg-white dark:bg-sage-900 border-[1.5px] border-sage-300 dark:border-sage-800">
+              <div className="card-header border-b-[1.5px] border-sage-100 dark:border-sage-800">
+                <div className="card-icon bg-sage-50 dark:bg-sage-800 border-[1.5px] border-sage-200 dark:border-sage-700">📊</div>
+                <div className="flex-1"><div className="card-title text-sage-900 dark:text-white">Tabel Pengukuran</div><div className="card-desc text-sage-500">Data pengukuran sebelum dan sesudah perbaikan</div></div>
+                <button onClick={addMeasurementRow} className="flex items-center gap-1 text-sm bg-sage-200 hover:bg-sage-500 hover:text-white text-sage-800 dark:bg-sage-800 dark:hover:bg-sage-700 dark:text-sage-300 py-1.5 px-3 rounded-lg transition-colors font-semibold">
                   <Plus size={16} /> Tambah Baris
                 </button>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="text-xs uppercase bg-sage-300 dark:bg-sage-800 text-sage-900 dark:text-sage-100">
-                    <tr>
-                      <th className="px-4 py-2 rounded-tl-lg">Parameter</th>
-                      <th className="px-4 py-2">Satuan</th>
-                      <th className="px-4 py-2">Referensi</th>
-                      <th className="px-4 py-2">Before</th>
-                      <th className="px-4 py-2">After</th>
-                      <th className="px-4 py-2 rounded-tr-lg w-10">Aksi</th>
+                <table className="measure-form-table">
+                  <thead>
+                    <tr className="bg-sage-200 dark:bg-sage-800 text-sage-800 dark:text-sage-200">
+                      <th className="rounded-tl-lg">Parameter</th><th>Satuan</th><th>Referensi</th><th>Before</th><th>After</th><th className="rounded-tr-lg w-12">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {measurements.map((m) => (
-                      <tr key={m.id} className="border-b border-sage-300 dark:border-sage-800/50">
-                        <td className="p-2"><input type="text" value={m.parameter} onChange={(e) => handleMeasurementChange(m.id, 'parameter', e.target.value)} className="w-full p-1.5 bg-white dark:bg-sage-900 border border-sage-300 dark:border-sage-700 rounded focus:ring-1 focus:ring-sage-500 outline-none" /></td>
-                        <td className="p-2 w-24"><input type="text" value={m.unit} onChange={(e) => handleMeasurementChange(m.id, 'unit', e.target.value)} className="w-full p-1.5 bg-white dark:bg-sage-900 border border-sage-300 dark:border-sage-700 rounded text-center focus:ring-1 focus:ring-sage-500 outline-none" /></td>
-                        <td className="p-2 w-32"><input type="text" value={m.reference} onChange={(e) => handleMeasurementChange(m.id, 'reference', e.target.value)} className="w-full p-1.5 bg-white dark:bg-sage-900 border border-sage-300 dark:border-sage-700 rounded focus:ring-1 focus:ring-sage-500 outline-none" /></td>
-                        <td className="p-2 w-32"><input type="text" value={m.before} onChange={(e) => handleMeasurementChange(m.id, 'before', e.target.value)} className="w-full p-1.5 bg-white dark:bg-sage-900 border border-sage-300 dark:border-sage-700 rounded focus:ring-1 focus:ring-sage-500 outline-none" /></td>
-                        <td className="p-2 w-32"><input type="text" value={m.after} onChange={(e) => handleMeasurementChange(m.id, 'after', e.target.value)} className="w-full p-1.5 bg-white dark:bg-sage-900 border border-sage-300 dark:border-sage-700 rounded focus:ring-1 focus:ring-sage-500 outline-none" /></td>
-                        <td className="p-2 text-center">
-                          <button onClick={() => removeMeasurementRow(m.id)} className="text-red-500 hover:text-red-700 p-1">
-                            <Trash2 size={18} />
-                          </button>
-                        </td>
+                    {measurements.map(m => (
+                      <tr key={m.id} className="border-b border-sage-200 dark:border-sage-800/50">
+                        <td><input type="text" value={m.parameter} onChange={e => handleMeasurementChange(m.id, 'parameter', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500" /></td>
+                        <td className="w-20"><input type="text" value={m.unit} onChange={e => handleMeasurementChange(m.id, 'unit', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 text-center focus:border-sage-500" /></td>
+                        <td className="w-28"><input type="text" value={m.reference} onChange={e => handleMeasurementChange(m.id, 'reference', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500" /></td>
+                        <td className="w-28"><input type="text" value={m.before} onChange={e => handleMeasurementChange(m.id, 'before', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500" /></td>
+                        <td className="w-28"><input type="text" value={m.after} onChange={e => handleMeasurementChange(m.id, 'after', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500" /></td>
+                        <td className="text-center"><button onClick={() => removeMeasurementRow(m.id)} className="measure-delete-btn text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30"><Trash2 size={17} /></button></td>
                       </tr>
                     ))}
                   </tbody>
@@ -285,125 +227,108 @@ function App() {
               </div>
             </div>
 
-            {/* Textarea Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="col-span-1 md:col-span-2">
-                <InputLabel htmlFor="diagnosis">Diagnosis / Kerusakan</InputLabel>
-                <textarea id="diagnosis" value={formData.diagnosis} onChange={handleChange} className="w-full p-3 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all min-h-[100px]"></textarea>
+            {/* Card: Catatan Teknisi */}
+            <div className="dash-card bg-white dark:bg-sage-900 border-[1.5px] border-sage-300 dark:border-sage-800">
+              <div className="card-header border-b-[1.5px] border-sage-100 dark:border-sage-800">
+                <div className="card-icon bg-sage-50 dark:bg-sage-800 border-[1.5px] border-sage-200 dark:border-sage-700">📝</div>
+                <div><div className="card-title text-sage-900 dark:text-white">Catatan Teknisi</div><div className="card-desc text-sage-500">Diagnosis, hasil pengecekan, dan langkah perbaikan</div></div>
               </div>
-              <div>
-                <InputLabel htmlFor="checkingResult">Hasil Pengecekan</InputLabel>
-                <textarea id="checkingResult" value={formData.checkingResult} onChange={handleChange} className="w-full p-3 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all min-h-[100px]"></textarea>
-              </div>
-              <div>
-                <InputLabel htmlFor="countermeasure">Langkah Perbaikan</InputLabel>
-                <textarea id="countermeasure" value={formData.countermeasure} onChange={handleChange} className="w-full p-3 rounded-lg border border-sage-300 dark:border-sage-700 bg-white dark:bg-sage-800 focus:ring-2 focus:ring-sage-500 outline-none transition-all min-h-[100px]"></textarea>
+              <div className="form-grid col-3">
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Diagnosis / Kerusakan</label><textarea id="diagnosis" value={formData.diagnosis} onChange={handleChange} className={textareaCls} placeholder="Cek unit lantai 2 ruang rapat..." /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Checking Result</label><textarea id="checkingResult" value={formData.checkingResult} onChange={handleChange} className={textareaCls} placeholder="Sudah di ganti kabel control..." /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Countermeasure</label><textarea id="countermeasure" value={formData.countermeasure} onChange={handleChange} className={textareaCls} placeholder="Saat ini unit sudah running..." /></div>
               </div>
             </div>
 
-            <button onClick={generateReport} className="w-full bg-sage-500 hover:bg-sage-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all flex justify-center items-center gap-2">
-              <FileText /> Generate Preview
-            </button>
-          </div>
+            {/* Generate Button */}
+            <div className="action-bar">
+              <button onClick={generateReport} className="btn-generate">
+                <span className="text-lg">🚀</span> Generate & Preview Report
+              </button>
+            </div>
+          </section>
         )}
 
         {/* ===== PREVIEW SECTION ===== */}
         {showPreview && (
-          <div className="p-8 bg-sage-100 dark:bg-sage-950 border-t-4 border-sage-500 print:p-0 print:bg-white print:border-none">
-            <div className="flex justify-between items-center mb-6 no-print">
-              <h2 className="text-2xl font-bold text-sage-900 dark:text-white">📄 Preview Report</h2>
-              <div className="flex gap-3">
-                <button onClick={backToForm} className="flex items-center gap-2 bg-sage-700 hover:bg-sage-900 text-white py-2 px-4 rounded-lg font-medium transition-colors print:hidden">
-                  <ArrowLeft size={18} /> Edit Data
+          <section className="preview-section">
+            <div className="preview-topbar bg-white dark:bg-sage-900 border-[1.5px] border-sage-300 dark:border-sage-800 no-print">
+              <div>
+                <h2 className="text-lg font-bold text-sage-900 dark:text-white">📄 Preview Laporan</h2>
+                <p className="text-sm text-sage-500">Periksa sebelum download</p>
+              </div>
+              <div className="preview-actions">
+                <button onClick={() => setShowPreview(false)} className="btn-back bg-white dark:bg-sage-800 text-sage-700 dark:text-sage-200 border-[1.5px] border-sage-300 dark:border-sage-700 hover:bg-sage-50 dark:hover:bg-sage-700">
+                  <ArrowLeft size={16} className="inline mr-1" /> Edit Data
                 </button>
-                <button onClick={downloadPDF} className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium shadow-md transition-colors print:hidden">
-                  <Download size={18} /> Cetak / Save PDF
+                <button onClick={() => window.print()} className="btn-download flex items-center gap-2">
+                  <Download size={16} /> Cetak / Save PDF
                 </button>
               </div>
             </div>
-            
-            {/* PDF Content Area */}
-            <div id="printable-area" className="bg-white text-black p-10 rounded-xl shadow-md mx-auto print:p-0 print:shadow-none print:w-full print:max-w-none" style={{ maxWidth: '210mm' }} ref={previewRef}>
-              <div className="text-center text-3xl font-bold mb-8 uppercase tracking-wide border-b-2 border-gray-300 pb-4">
-                Service Report Detail
+
+            <div id="printable-area" className="report-paper" ref={previewRef}>
+              {/* Letterhead */}
+              <div className="rpt-letterhead">
+                <div>
+                  <div className="rpt-company-name">Mitra Maju Sejati</div>
+                  <div className="rpt-company-sub">Service & Maintenance AC Profesional</div>
+                </div>
+                <div className="rpt-badge">MMS</div>
               </div>
 
-              {/* Info Utama */}
-              <table className="w-full text-sm mb-8 border-collapse avoid-page-break">
+              <div className="rpt-title">SERVICE REPORT DETAIL</div>
+
+              {/* Info Table */}
+              <table className="rpt-info-table">
                 <tbody>
-                  {[
-                    ['Unit (In / Out)', `${formData.indoorModel || '-'} / ${formData.outdoorModel || '-'}`],
-                    ['Serial Number', `${formData.indoorSerial || '-'} / ${formData.outdoorSerial || '-'}`],
-                    ['Customer', formData.customerName],
-                    ['Alamat', formData.address || '-'],
-                    ['Teknisi', formData.technicianName || '-'],
-                    ['Tanggal Pekerjaan', new Date(formData.reportDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })],
-                    ['Error Code', formData.errorCode || '-'],
-                    ['Cause of Failure', formData.failureCause || '-'],
-                    ['Mode Operasi', formData.operationMode],
-                    ['Setting Temp', `${formData.setTemp || '-'} °C`]
-                  ].map(([label, value], i) => (
-                    <tr key={i} className="border-b border-gray-200 last:border-0">
-                      <td className="py-2 w-1/3 font-bold text-gray-900">{label}</td>
-                      <td className="py-2 text-gray-800">{value}</td>
+                  <tr><td className="rpt-key">Unit (In / Out)</td><td>{formData.indoorModel || '-'} / {formData.outdoorModel || '-'}</td><td className="rpt-key">Serial Number</td><td>{formData.indoorSerial || '-'} / {formData.outdoorSerial || '-'}</td></tr>
+                  <tr><td className="rpt-key">Customer</td><td>{formData.customerName}</td><td className="rpt-key">Alamat</td><td>{formData.address || '-'}</td></tr>
+                  <tr><td className="rpt-key">Teknisi</td><td>{formData.technicianName || '-'}</td><td className="rpt-key">No Laporan</td><td>{formData.reportNumber}</td></tr>
+                  <tr><td className="rpt-key">Error Code</td><td>{formData.errorCode || '-'}</td><td className="rpt-key">Mode Operasi</td><td>{formData.operationMode} / {formData.setTemp || '-'}°C</td></tr>
+                  <tr><td className="rpt-key">Cause of Failure</td><td colSpan={3}>{formData.failureCause || '-'}</td></tr>
+                </tbody>
+              </table>
+
+              {/* Diagnosis */}
+              <div className="rpt-section-label">Diagnosa Kerusakan</div>
+              <div className="rpt-block">{formData.diagnosis || '-'}</div>
+
+              {/* Checking Result */}
+              <div className="rpt-section-label">Hasil Pengecekan</div>
+              <div className="rpt-block">{formData.checkingResult || '-'}</div>
+
+              {/* Measurement Table */}
+              <div className="rpt-section-label">Data Pengukuran</div>
+              <table className="rpt-measure-table">
+                <thead>
+                  <tr><th>Data Pengukuran</th><th>Satuan</th><th>Referensi</th><th>Data Before</th><th>Data After</th></tr>
+                </thead>
+                <tbody>
+                  {measurements.map(m => (
+                    <tr key={m.id}>
+                      <td style={{ fontFamily: 'var(--font-body)' }}>{m.parameter || '-'}</td>
+                      <td>{m.unit || '-'}</td><td>{m.reference || '-'}</td>
+                      <td>{m.before || '-'}</td><td style={{ fontWeight: 600 }}>{m.after || '-'}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
 
-              {/* Diagnosa */}
-              <div className="mb-6 avoid-page-break">
-                <h3 className="text-base font-bold text-gray-900 mb-1">Diagnosa Kerusakan:</h3>
-                <p className="text-sm text-gray-800 whitespace-pre-wrap">{formData.diagnosis || '-'}</p>
-              </div>
-
-              {/* Hasil Pengecekan */}
-              <div className="mb-6 avoid-page-break">
-                <h3 className="text-base font-bold text-gray-900 mb-1">Hasil Pengecekan:</h3>
-                <p className="text-sm text-gray-800 whitespace-pre-wrap">{formData.checkingResult || '-'}</p>
-              </div>
-
-              {/* Tabel Pengukuran */}
-              <div className="mb-8 avoid-page-break">
-                <table className="w-full text-sm border-collapse border border-gray-400 text-center">
-                  <thead>
-                    <tr className="text-gray-900 border-b border-gray-400">
-                      <th className="border-r border-gray-400 p-2 text-left">Data Pengukuran</th>
-                      <th className="border border-gray-400 p-2">Satuan</th>
-                      <th className="border border-gray-400 p-2">Referensi</th>
-                      <th className="border border-gray-400 p-2">Data Before</th>
-                      <th className="border border-gray-400 p-2">Data After</th>
-                    </tr>
-                  </thead>
-                  <tbody className="font-mono text-xs text-gray-800">
-                    {measurements.map(m => (
-                      <tr key={m.id}>
-                        <td className="border border-gray-400 p-2 text-left font-sans">{m.parameter || '-'}</td>
-                        <td className="border border-gray-400 p-2">{m.unit || '-'}</td>
-                        <td className="border border-gray-400 p-2">{m.reference || '-'}</td>
-                        <td className="border border-gray-400 p-2">{m.before || '-'}</td>
-                        <td className="border border-gray-400 p-2 font-bold text-gray-900">{m.after || '-'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
               {/* Countermeasure */}
-              <div className="mb-8 avoid-page-break">
-                <h3 className="text-base font-bold text-gray-900 mb-1">Countermeasure / Langkah Perbaikan:</h3>
-                <p className="text-sm text-gray-800 whitespace-pre-wrap">{formData.countermeasure || '-'}</p>
-              </div>
+              <div className="rpt-section-label">Countermeasure / Langkah Perbaikan</div>
+              <div className="rpt-block-success">{formData.countermeasure || '-'}</div>
 
               {/* Footer */}
-              <div className="mt-12 text-xs text-gray-500 text-right border-t border-gray-300 pt-4 avoid-page-break flex justify-between">
-                <span>Generated via Service Report App</span>
-                <span>No Laporan: <strong className="text-gray-900">{formData.reportNumber}</strong> | Cetak: {new Date().toLocaleDateString('id-ID')}</span>
+              <div className="rpt-footer">
+                <span>No. Laporan: {formData.reportNumber}</span>
+                <span>Mitra Maju Sejati — Service Report</span>
+                <span>Dicetak: {new Date().toLocaleDateString('id-ID')}</span>
               </div>
             </div>
-          </div>
+          </section>
         )}
-      </div>
+      </main>
     </div>
   );
 }
