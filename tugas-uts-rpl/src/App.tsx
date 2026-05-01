@@ -140,11 +140,11 @@ function App() {
   );
 
   return (
-    <div className="min-h-screen bg-sage-100 dark:bg-sage-950 text-sage-900 dark:text-sage-50 transition-colors duration-300 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto bg-white dark:bg-sage-900 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-sage-100 dark:bg-sage-950 text-sage-900 dark:text-sage-50 transition-colors duration-300 py-8 px-4 sm:px-6 lg:px-8 print:py-0 print:px-0 print:bg-white">
+      <div className="max-w-5xl mx-auto bg-white dark:bg-sage-900 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300 print:shadow-none print:rounded-none print:max-w-none">
         
         {/* HEADER */}
-        <div className="bg-sage-700 dark:bg-sage-800 p-8 text-center relative border-b border-transparent dark:border-sage-800">
+        <div className="bg-sage-700 dark:bg-sage-800 p-8 text-center relative border-b border-transparent dark:border-sage-800 print:hidden">
           <button 
             onClick={() => setIsDarkMode(!isDarkMode)}
             className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
@@ -310,7 +310,7 @@ function App() {
 
         {/* ===== PREVIEW SECTION ===== */}
         {showPreview && (
-          <div className="p-8 bg-sage-100 dark:bg-sage-950 border-t-4 border-sage-500">
+          <div className="p-8 bg-sage-100 dark:bg-sage-950 border-t-4 border-sage-500 print:p-0 print:bg-white print:border-none">
             <div className="flex justify-between items-center mb-6 no-print">
               <h2 className="text-2xl font-bold text-sage-900 dark:text-white">📄 Preview Report</h2>
               <div className="flex gap-3">
@@ -324,7 +324,7 @@ function App() {
             </div>
             
             {/* PDF Content Area */}
-            <div id="printable-area" className="bg-white text-black p-10 rounded-xl shadow-md mx-auto" style={{ maxWidth: '210mm' }} ref={previewRef}>
+            <div id="printable-area" className="bg-white text-black p-10 rounded-xl shadow-md mx-auto print:p-0 print:shadow-none print:w-full print:max-w-none" style={{ maxWidth: '210mm' }} ref={previewRef}>
               <div className="text-center text-3xl font-bold mb-8 text-sage-900 uppercase tracking-wide border-b-2 border-sage-300 pb-4">
                 Service Report Detail
               </div>
