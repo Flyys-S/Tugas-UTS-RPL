@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sage-50: #edf1eb;
+  --color-sage-100: #dad7cd;
+  --color-sage-300: #a3b18a;
+  --color-sage-500: #588157;
+  --color-sage-700: #3a5a40;
+  --color-sage-800: #344e41;
+  --color-sage-900: #23352c;
+  --color-sage-950: #16221c;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+@layer utilities {
+  .avoid-page-break {
+    page-break-inside: avoid;
+  }
+}
+
+/* Custom styles specific to jsPDF printing to override any issues */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
