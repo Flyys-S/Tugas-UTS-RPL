@@ -37,6 +37,14 @@ export interface SavedReport {
   createdAt: string; // ISO date string
 }
 
-export type Page = 'service-report' | 'riwayat';
+export interface Customer {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  createdAt: string;
+}
+
+export type Page = 'service-report' | 'riwayat' | 'customer';
 
 export type FilterPeriod = 'all' | 'week' | 'month' | 'year';

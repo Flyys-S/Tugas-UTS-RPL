@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Sun, Moon, Plus, Trash2, ArrowLeft, Download, FileText } from 'lucide-react';
 import './index.css';
-import type { MeasurementData, FormData, SavedReport, Page } from './types';
-import { getAllReports, saveReport } from './storage';
+import type { MeasurementData, FormData, SavedReport, Customer, Page } from './types';
+import { getAllReports, saveReport, getAllCustomers, ensureCustomer } from './storage';
 import Riwayat from './components/Riwayat';
 import ReportModal from './components/ReportModal';
+import CustomerPage from './components/Customer';
 
 const initialMeasurements: MeasurementData[] = [
   { id: '1', parameter: 'Voltage (R-S)', unit: 'V', reference: '380-410V', before: '-', after: '405 Volt' },
@@ -38,9 +39,12 @@ function App() {
   const [savedReports, setSavedReports] = useState<SavedReport[]>([]);
   const [viewingReport, setViewingReport] = useState<SavedReport | null>(null);
   const [toast, setToast] = useState('');
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const refreshReports = () => setSavedReports(getAllReports());
-  useEffect(() => { refreshReports(); }, []);
+  const refreshCustomers = () => setCustomers(getAllCustomers());
+  useEffect(() => { refreshReports(); refreshCustomers(); }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);
@@ -87,12 +91,24 @@ function App() {
       createdAt: new Date().toISOString(),
     };
     saveReport(report);
+    // Auto-save customer
+    ensureCustomer(formData.customerName, formData.address);
     refreshReports();
+    refreshCustomers();
     setToast('✅ Laporan tersimpan ke riwayat!');
     setTimeout(() => setToast(''), 3000);
     setShowPreview(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const selectCustomer = (c: Customer) => {
+    setFormData(prev => ({ ...prev, customerName: c.name, address: c.address }));
+    setShowSuggestions(false);
+  };
+
+  const customerSuggestions = formData.customerName.trim().length >= 1
+    ? customers.filter(c => c.name.toLowerCase().includes(formData.customerName.toLowerCase()))
+    : [];
 
   const navigateTo = (page: Page) => {
     setCurrentPage(page);
@@ -100,7 +116,10 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const pageTitle = currentPage === 'riwayat' ? 'Riwayat Laporan' : 'Service Report Generator';
+  const pageTitles: Record<Page, string> = { 'service-report': 'Service Report Generator', riwayat: 'Riwayat Laporan', customer: 'Data Customer' };
+  const pageTitle = pageTitles[currentPage];
+  const pageDescs: Record<Page, string> = { 'service-report': 'Buat laporan servis AC profesional dalam hitungan detik', riwayat: 'Lihat dan kelola semua laporan servis', customer: 'Kelola data pelanggan' };
+  const pageDesc = pageDescs[currentPage];
 
   const todayStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -124,7 +143,7 @@ function App() {
           <button className={`nav-item ${currentPage === 'service-report' ? 'active' : ''}`} onClick={() => navigateTo('service-report')}><span className="nav-icon">📋</span><span>Service Report</span></button>
           <button className={`nav-item ${currentPage === 'riwayat' ? 'active' : ''}`} onClick={() => navigateTo('riwayat')}><span className="nav-icon">📁</span><span>Riwayat</span></button>
           <button className="nav-item"><span className="nav-icon">🔧</span><span>Unit</span></button>
-          <button className="nav-item"><span className="nav-icon">👤</span><span>Customer</span></button>
+          <button className={`nav-item ${currentPage === 'customer' ? 'active' : ''}`} onClick={() => navigateTo('customer')}><span className="nav-icon">👤</span><span>Customer</span></button>
         </nav>
         <div className="sidebar-footer">
           <div className="sidebar-version">v2.0.0</div>
@@ -140,7 +159,7 @@ function App() {
             <h1 className="page-title text-sage-900 dark:text-white">
               {pageTitle} <span className="page-title-tag">MMS</span>
             </h1>
-            <p className="page-subtitle text-sage-500">{currentPage === 'riwayat' ? 'Lihat dan kelola semua laporan servis' : 'Buat laporan servis AC profesional dalam hitungan detik'}</p>
+            <p className="page-subtitle text-sage-500">{pageDesc}</p>
           </div>
           <div className="topbar-right">
             <div className="date-badge bg-sage-50 dark:bg-sage-800 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-700 dark:text-sage-200">{todayStr}</div>
@@ -181,7 +200,20 @@ function App() {
                 <div><div className="card-title text-sage-900 dark:text-white">Informasi Customer</div><div className="card-desc text-sage-500">Data pelanggan dan teknisi</div></div>
               </div>
               <div className="form-grid col-4">
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Nama Customer</label><input type="text" id="customerName" value={formData.customerName} onChange={handleChange} className={inputCls} placeholder="BPK MT Haryono" /></div>
+                <div className="form-group relative">
+                  <label className="form-label text-sage-700 dark:text-sage-300">Nama Customer</label>
+                  <input type="text" id="customerName" value={formData.customerName} onChange={(e) => { handleChange(e); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} className={inputCls} placeholder="Ketik untuk cari..." autoComplete="off" />
+                  {showSuggestions && customerSuggestions.length > 0 && (
+                    <div className="autocomplete-dropdown bg-white dark:bg-sage-900 border-[1.5px] border-sage-300 dark:border-sage-700">
+                      {customerSuggestions.map(c => (
+                        <button key={c.id} className="autocomplete-item text-sage-900 dark:text-sage-100 hover:bg-sage-50 dark:hover:bg-sage-800" onMouseDown={() => selectCustomer(c)}>
+                          <span className="font-semibold">{c.name}</span>
+                          {c.address && <span className="text-xs text-sage-500 ml-2">— {c.address}</span>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Alamat</label><input type="text" id="address" value={formData.address} onChange={handleChange} className={inputCls} placeholder="South Jakarta Office" /></div>
                 <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Nama Teknisi</label><input type="text" id="technicianName" value={formData.technicianName} onChange={handleChange} className={inputCls} placeholder="Iwan Saputra" /></div>
                 <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">No Laporan</label><input type="text" id="reportNumber" value={formData.reportNumber} onChange={handleChange} className={inputCls} placeholder="00133772" /></div>
@@ -353,6 +385,11 @@ function App() {
         {/* ===== RIWAYAT PAGE ===== */}
         {currentPage === 'riwayat' && (
           <Riwayat reports={savedReports} onRefresh={refreshReports} onViewDetail={setViewingReport} />
+        )}
+
+        {/* ===== CUSTOMER PAGE ===== */}
+        {currentPage === 'customer' && (
+          <CustomerPage customers={customers} onRefresh={refreshCustomers} />
         )}
       </main>
 

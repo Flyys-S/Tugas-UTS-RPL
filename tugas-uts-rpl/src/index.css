@@ -753,6 +753,39 @@ body {
 }
 
 /* =============================================
+   AUTOCOMPLETE DROPDOWN
+   ============================================= */
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0; right: 0;
+  z-index: 50;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 4px;
+}
+
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13px;
+  text-align: left;
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.autocomplete-item:last-child { border-bottom: none; }
+
+/* =============================================
    UTILITIES
    ============================================= */
 @layer utilities {
