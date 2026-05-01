@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica-Bold',
     color: '#000000',
     padding: 5,
-    backgroundColor: '#f5f5f5',
     borderRightWidth: 1,
     borderRightColor: '#000000',
   },
@@ -77,7 +76,6 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#f5f5f5',
     borderBottomWidth: 1,
     borderBottomColor: '#000000',
   },

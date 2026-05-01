@@ -375,8 +375,8 @@ function App() {
               <div className="mb-8 avoid-page-break">
                 <table className="w-full text-sm border-collapse border border-gray-400 text-center">
                   <thead>
-                    <tr className="bg-gray-100 text-gray-900">
-                      <th className="border border-gray-400 p-2 text-left">Data Pengukuran</th>
+                    <tr className="text-gray-900 border-b border-gray-400">
+                      <th className="border-r border-gray-400 p-2 text-left">Data Pengukuran</th>
                       <th className="border border-gray-400 p-2">Satuan</th>
                       <th className="border border-gray-400 p-2">Referensi</th>
                       <th className="border border-gray-400 p-2">Data Before</th>
