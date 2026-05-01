@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import html2pdf from 'html2pdf.js';
 import { Sun, Moon, Plus, Trash2, ArrowLeft, Download, FileText } from 'lucide-react';
 import './index.css';
 
@@ -128,7 +127,7 @@ function App() {
     setShowPreview(false);
   };
 
-  const downloadPDF = () => {
+  const downloadPDF = async () => {
     const previewElement = previewRef.current;
     if (!previewElement) return;
 
@@ -144,11 +143,21 @@ function App() {
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
-    setTimeout(() => {
-      html2pdf().from(previewElement).set(opt).save().then(() => {
-        if (wasDark) document.documentElement.classList.add('dark');
-      });
-    }, 100);
+    try {
+      // Dynamic import to fix production build issue and reduce chunk size
+      const html2pdfModule = await import('html2pdf.js');
+      const html2pdf = html2pdfModule.default || html2pdfModule;
+      
+      setTimeout(() => {
+        html2pdf().from(previewElement).set(opt).save().then(() => {
+          if (wasDark) document.documentElement.classList.add('dark');
+        });
+      }, 100);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Maaf, terjadi kesalahan saat membuat PDF.");
+      if (wasDark) document.documentElement.classList.add('dark');
+    }
   };
 
   const InputLabel = ({ htmlFor, children, required }: { htmlFor: string, children: React.ReactNode, required?: boolean }) => (
