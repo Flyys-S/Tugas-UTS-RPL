@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Sun, Moon, Plus, Trash2, ArrowLeft, Download, FileText } from 'lucide-react';
+import { ServiceReportPDF } from './components/ServiceReportPDF';
 import './index.css';
 
 interface MeasurementData {
@@ -127,11 +129,7 @@ function App() {
     setShowPreview(false);
   };
 
-  const downloadPDF = () => {
-    // Gunakan fitur native Print browser untuk membuat PDF
-    // Ini adalah cara paling stabil dan menghasilkan teks vector yang tajam
-    window.print();
-  };
+
 
   const InputLabel = ({ htmlFor, children, required }: { htmlFor: string, children: React.ReactNode, required?: boolean }) => (
     <label htmlFor={htmlFor} className="block text-sm font-semibold text-sage-900 dark:text-sage-100 mb-1">
@@ -317,9 +315,18 @@ function App() {
                 <button onClick={backToForm} className="flex items-center gap-2 bg-sage-700 hover:bg-sage-900 text-white py-2 px-4 rounded-lg font-medium transition-colors">
                   <ArrowLeft size={18} /> Edit Data
                 </button>
-                <button onClick={downloadPDF} className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium shadow-md transition-colors">
-                  <Download size={18} /> Cetak / Save PDF
-                </button>
+                <PDFDownloadLink
+                  document={<ServiceReportPDF formData={formData} measurements={measurements} />}
+                  fileName={`Service-Report-${formData.reportNumber || '0000'}.pdf`}
+                  className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium shadow-md transition-colors"
+                >
+                  {({ loading }) => (
+                    <>
+                      <Download size={18} />
+                      {loading ? 'Membuat PDF...' : 'Download PDF'}
+                    </>
+                  )}
+                </PDFDownloadLink>
               </div>
             </div>
             
