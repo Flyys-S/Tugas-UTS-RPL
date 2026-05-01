@@ -11,21 +11,22 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({ 
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true
+      },
       manifest: {
-        name: 'Service Report Generator',
-        short_name: 'ServiceReport',
-        description: 'Aplikasi pembuat laporan servis teknisi lapangan',
-        theme_color: '#3498db',
+        name: 'Service Report Generator - MMS',
+        short_name: 'MMS Report',
+        description: 'Aplikasi pembuat laporan servis teknisi lapangan Mitra Maju Sejati',
+        theme_color: '#588157',
+        background_color: '#ffffff',
+        display: 'standalone',
         icons: [
           {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'pwa-512x512.png',
+            src: 'pwa-icon.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           }
         ]
       }
