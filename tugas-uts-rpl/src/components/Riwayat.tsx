@@ -53,10 +53,10 @@ export default function Riwayat({ reports, onRefresh, onViewDetail }: Props) {
   const weekCount = filterReports(reports, 'week', '').length;
   const monthCount = filterReports(reports, 'month', '').length;
 
-  const handleDelete = (id: string, e: React.MouseEvent) => {
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (confirm('Hapus laporan ini dari riwayat?')) {
-      deleteReport(id);
+      await deleteReport(id);
       onRefresh();
     }
   };

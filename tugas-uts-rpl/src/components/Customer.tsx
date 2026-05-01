@@ -19,9 +19,9 @@ export default function CustomerPage({ customers, onRefresh }: Props) {
     c.address.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!form.name.trim()) return;
-    saveCustomer({ id: Date.now().toString(), name: form.name.trim(), address: form.address.trim(), phone: form.phone.trim(), createdAt: new Date().toISOString() });
+    await saveCustomer({ id: Date.now().toString(), name: form.name.trim(), address: form.address.trim(), phone: form.phone.trim(), createdAt: new Date().toISOString() });
     setForm({ name: '', address: '', phone: '' });
     setShowAdd(false);
     onRefresh();
@@ -32,16 +32,16 @@ export default function CustomerPage({ customers, onRefresh }: Props) {
     setForm({ name: c.name, address: c.address, phone: c.phone });
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editId || !form.name.trim()) return;
-    updateCustomer({ id: editId, name: form.name.trim(), address: form.address.trim(), phone: form.phone.trim(), createdAt: '' });
+    await updateCustomer({ id: editId, name: form.name.trim(), address: form.address.trim(), phone: form.phone.trim(), createdAt: '' });
     setEditId(null);
     setForm({ name: '', address: '', phone: '' });
     onRefresh();
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm('Hapus customer ini?')) { deleteCustomer(id); onRefresh(); }
+  const handleDelete = async (id: string) => {
+    if (confirm('Hapus customer ini?')) { await deleteCustomer(id); onRefresh(); }
   };
 
   const inputCls = "form-input bg-sage-50 dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-800 text-sage-900 dark:text-sage-100 focus:border-sage-500";

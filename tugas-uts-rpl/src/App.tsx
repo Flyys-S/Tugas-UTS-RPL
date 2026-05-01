@@ -42,8 +42,8 @@ function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const refreshReports = () => setSavedReports(getAllReports());
-  const refreshCustomers = () => setCustomers(getAllCustomers());
+  const refreshReports = async () => setSavedReports(await getAllReports());
+  const refreshCustomers = async () => setCustomers(await getAllCustomers());
   useEffect(() => { refreshReports(); refreshCustomers(); }, []);
 
   useEffect(() => {
@@ -76,7 +76,7 @@ function App() {
     setMeasurements(prev => prev.filter(m => m.id !== id));
   };
 
-  const generateReport = () => {
+  const generateReport = async () => {
     if (!formData.customerName.trim() || !formData.reportNumber.trim() || (!formData.indoorModel.trim() && !formData.outdoorModel.trim())) {
       setFormError('Pastikan Nama Customer, No Laporan, dan Model Unit terisi!');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -90,9 +90,9 @@ function App() {
       measurements: [...measurements],
       createdAt: new Date().toISOString(),
     };
-    saveReport(report);
+    await saveReport(report);
     // Auto-save customer
-    ensureCustomer(formData.customerName, formData.address);
+    await ensureCustomer(formData.customerName, formData.address);
     refreshReports();
     refreshCustomers();
     setToast('✅ Laporan tersimpan ke riwayat!');

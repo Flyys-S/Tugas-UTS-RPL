@@ -1,105 +1,188 @@
 // =============================================
-// STORAGE SERVICE — Data Abstraction Layer
+// STORAGE SERVICE — Supabase Backend
 // =============================================
-// Saat ini menggunakan localStorage.
-// Nanti tinggal ganti implementasi di bawah ini
-// dengan Supabase/API calls tanpa mengubah App.tsx.
+// Semua operasi data sekarang terhubung ke Supabase.
+// Fungsi-fungsi async mengembalikan Promise.
 // =============================================
 
-import type { SavedReport, Customer } from './types';
-
-const STORAGE_KEY = 'mms-reports';
-const CUSTOMER_KEY = 'mms-customers';
-
-// ---- HELPERS ----
-function readAll(): SavedReport[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeAll(reports: SavedReport[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(reports));
-}
+import { supabase } from './supabaseClient';
+import type { SavedReport, Customer, MeasurementData, FormData } from './types';
 
 // =============================================
-// PUBLIC API — ganti isi fungsi ini untuk database
+// REPORTS API
 // =============================================
 
 /** Ambil semua laporan, terbaru di atas */
-export function getAllReports(): SavedReport[] {
-  return readAll().sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+export async function getAllReports(): Promise<SavedReport[]> {
+  const { data: reports, error } = await supabase
+    .from('reports')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error || !reports) return [];
+
+  // Fetch measurements for each report
+  const result: SavedReport[] = [];
+  for (const r of reports) {
+    const { data: meas } = await supabase
+      .from('measurements')
+      .select('*')
+      .eq('report_id', r.id);
+
+    result.push({
+      id: String(r.id),
+      formData: {
+        indoorModel: r.indoor_model || '',
+        indoorSerial: r.indoor_serial || '',
+        outdoorModel: r.outdoor_model || '',
+        outdoorSerial: r.outdoor_serial || '',
+        customerName: r.customer_name || '',
+        address: r.address || '',
+        technicianName: r.technician_name || '',
+        reportNumber: r.report_number || '',
+        errorCode: r.error_code || '',
+        failureCause: r.failure_cause || '',
+        operationMode: r.operation_mode || '',
+        setTemp: r.set_temp || '',
+        diagnosis: r.diagnosis || '',
+        checkingResult: r.checking_result || '',
+        countermeasure: r.countermeasure || '',
+        reportDate: r.report_date || '',
+      },
+      measurements: (meas || []).map((m: any) => ({
+        id: String(m.id),
+        parameter: m.parameter || '',
+        unit: m.unit || '',
+        reference: m.reference || '',
+        before: m.before_value || '',
+        after: m.after_value || '',
+      })),
+      createdAt: r.created_at,
+    });
+  }
+
+  return result;
 }
 
 /** Simpan laporan baru */
-export function saveReport(report: SavedReport): void {
-  const all = readAll();
-  all.push(report);
-  writeAll(all);
+export async function saveReport(report: SavedReport): Promise<void> {
+  const fd = report.formData;
+
+  const { data: inserted, error } = await supabase
+    .from('reports')
+    .insert({
+      indoor_model: fd.indoorModel,
+      indoor_serial: fd.indoorSerial,
+      outdoor_model: fd.outdoorModel,
+      outdoor_serial: fd.outdoorSerial,
+      customer_name: fd.customerName,
+      address: fd.address,
+      technician_name: fd.technicianName,
+      report_number: fd.reportNumber,
+      error_code: fd.errorCode,
+      failure_cause: fd.failureCause,
+      operation_mode: fd.operationMode,
+      set_temp: fd.setTemp,
+      diagnosis: fd.diagnosis,
+      checking_result: fd.checkingResult,
+      countermeasure: fd.countermeasure,
+      report_date: fd.reportDate,
+    })
+    .select('id')
+    .single();
+
+  if (error || !inserted) {
+    console.error('Error saving report:', error);
+    return;
+  }
+
+  // Save measurements
+  if (report.measurements.length > 0) {
+    const rows = report.measurements.map(m => ({
+      report_id: inserted.id,
+      parameter: m.parameter,
+      unit: m.unit,
+      reference: m.reference,
+      before_value: m.before,
+      after_value: m.after,
+    }));
+
+    const { error: mError } = await supabase.from('measurements').insert(rows);
+    if (mError) console.error('Error saving measurements:', mError);
+  }
 }
 
-/** Hapus laporan berdasarkan ID */
-export function deleteReport(id: string): void {
-  const filtered = readAll().filter(r => r.id !== id);
-  writeAll(filtered);
+/** Hapus laporan berdasarkan ID (cascade deletes measurements) */
+export async function deleteReport(id: string): Promise<void> {
+  const { error } = await supabase.from('reports').delete().eq('id', Number(id));
+  if (error) console.error('Error deleting report:', error);
 }
 
 /** Ambil satu laporan berdasarkan ID */
-export function getReportById(id: string): SavedReport | undefined {
-  return readAll().find(r => r.id === id);
+export async function getReportById(id: string): Promise<SavedReport | undefined> {
+  const all = await getAllReports();
+  return all.find(r => r.id === id);
 }
 
 /** Hitung total laporan */
-export function getReportCount(): number {
-  return readAll().length;
+export async function getReportCount(): Promise<number> {
+  const { count } = await supabase.from('reports').select('*', { count: 'exact', head: true });
+  return count || 0;
 }
 
 // =============================================
 // CUSTOMER API
 // =============================================
 
-function readCustomers(): Customer[] {
-  try {
-    const raw = localStorage.getItem(CUSTOMER_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch { return []; }
+export async function getAllCustomers(): Promise<Customer[]> {
+  const { data, error } = await supabase
+    .from('customers')
+    .select('*')
+    .order('name', { ascending: true });
+
+  if (error || !data) return [];
+
+  return data.map((c: any) => ({
+    id: String(c.id),
+    name: c.name || '',
+    address: c.address || '',
+    phone: c.phone || '',
+    createdAt: c.created_at,
+  }));
 }
 
-function writeCustomers(customers: Customer[]): void {
-  localStorage.setItem(CUSTOMER_KEY, JSON.stringify(customers));
+export async function saveCustomer(customer: Customer): Promise<void> {
+  const { error } = await supabase.from('customers').insert({
+    name: customer.name,
+    address: customer.address,
+    phone: customer.phone,
+  });
+  if (error) console.error('Error saving customer:', error);
 }
 
-export function getAllCustomers(): Customer[] {
-  return readCustomers().sort((a, b) => a.name.localeCompare(b.name));
+export async function updateCustomer(customer: Customer): Promise<void> {
+  const { error } = await supabase
+    .from('customers')
+    .update({ name: customer.name, address: customer.address, phone: customer.phone })
+    .eq('id', Number(customer.id));
+  if (error) console.error('Error updating customer:', error);
 }
 
-export function saveCustomer(customer: Customer): void {
-  const all = readCustomers();
-  all.push(customer);
-  writeCustomers(all);
-}
-
-export function updateCustomer(customer: Customer): void {
-  const all = readCustomers().map(c => c.id === customer.id ? customer : c);
-  writeCustomers(all);
-}
-
-export function deleteCustomer(id: string): void {
-  writeCustomers(readCustomers().filter(c => c.id !== id));
+export async function deleteCustomer(id: string): Promise<void> {
+  const { error } = await supabase.from('customers').delete().eq('id', Number(id));
+  if (error) console.error('Error deleting customer:', error);
 }
 
 /** Auto-save customer dari form jika belum ada */
-export function ensureCustomer(name: string, address: string): void {
+export async function ensureCustomer(name: string, address: string): Promise<void> {
   if (!name.trim()) return;
-  const all = readCustomers();
-  const exists = all.some(c => c.name.toLowerCase() === name.trim().toLowerCase());
-  if (!exists) {
-    all.push({ id: Date.now().toString(), name: name.trim(), address: address.trim(), phone: '', createdAt: new Date().toISOString() });
-    writeCustomers(all);
+  const { data } = await supabase
+    .from('customers')
+    .select('id')
+    .ilike('name', name.trim())
+    .limit(1);
+
+  if (!data || data.length === 0) {
+    await supabase.from('customers').insert({ name: name.trim(), address: address.trim(), phone: '' });
   }
 }
