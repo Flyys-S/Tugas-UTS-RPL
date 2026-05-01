@@ -61,14 +61,10 @@ const styles = StyleSheet.create({
     color: '#000000',
     padding: 5,
   },
-  box: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#000000',
+  textSection: {
     marginBottom: 20,
-    minHeight: 60,
   },
-  boxText: {
+  plainText: {
     fontSize: 10,
     color: '#000000',
   },
@@ -192,15 +188,15 @@ export const ServiceReportPDF: React.FC<Props> = ({ formData, measurements }) =>
         </View>
 
         {/* Diagnosa */}
-        <View style={styles.box} wrap={false}>
+        <View style={styles.textSection} wrap={false}>
           <Text style={styles.sectionTitle}>Diagnosa Kerusakan:</Text>
-          <Text style={styles.boxText}>{formData.diagnosis || '-'}</Text>
+          <Text style={styles.plainText}>{formData.diagnosis || '-'}</Text>
         </View>
 
         {/* Hasil Pengecekan */}
-        <View style={styles.box} wrap={false}>
+        <View style={styles.textSection} wrap={false}>
           <Text style={styles.sectionTitle}>Hasil Pengecekan:</Text>
-          <Text style={styles.boxText}>{formData.checkingResult || '-'}</Text>
+          <Text style={styles.plainText}>{formData.checkingResult || '-'}</Text>
         </View>
 
         {/* Tabel Pengukuran */}
@@ -224,9 +220,9 @@ export const ServiceReportPDF: React.FC<Props> = ({ formData, measurements }) =>
         </View>
 
         {/* Countermeasure */}
-        <View style={styles.box} wrap={false}>
+        <View style={styles.textSection} wrap={false}>
           <Text style={styles.sectionTitle}>Countermeasure / Langkah Perbaikan:</Text>
-          <Text style={styles.boxText}>{formData.countermeasure || '-'}</Text>
+          <Text style={styles.plainText}>{formData.countermeasure || '-'}</Text>
         </View>
 
         {/* Footer */}

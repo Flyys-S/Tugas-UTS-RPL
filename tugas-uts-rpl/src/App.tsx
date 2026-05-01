@@ -332,12 +332,12 @@ function App() {
             
             {/* PDF Content Area */}
             <div id="printable-area" className="bg-white text-black p-10 rounded-xl shadow-md mx-auto print:p-0 print:shadow-none print:w-full print:max-w-none" style={{ maxWidth: '210mm' }} ref={previewRef}>
-              <div className="text-center text-3xl font-bold mb-8 text-sage-900 uppercase tracking-wide border-b-2 border-sage-300 pb-4">
+              <div className="text-center text-3xl font-bold mb-8 uppercase tracking-wide border-b-2 border-gray-300 pb-4">
                 Service Report Detail
               </div>
 
               {/* Info Utama */}
-              <table className="w-full text-sm mb-6 border-collapse avoid-page-break">
+              <table className="w-full text-sm mb-8 border-collapse avoid-page-break">
                 <tbody>
                   {[
                     ['Unit (In / Out)', `${formData.indoorModel || '-'} / ${formData.outdoorModel || '-'}`],
@@ -351,46 +351,46 @@ function App() {
                     ['Mode Operasi', formData.operationMode],
                     ['Setting Temp', `${formData.setTemp || '-'} °C`]
                   ].map(([label, value], i) => (
-                    <tr key={i} className="border-b border-sage-100 last:border-0">
-                      <td className="py-2 w-1/3 font-bold text-sage-900">{label}</td>
-                      <td className="py-2 text-sage-700">{value}</td>
+                    <tr key={i} className="border-b border-gray-200 last:border-0">
+                      <td className="py-2 w-1/3 font-bold text-gray-900">{label}</td>
+                      <td className="py-2 text-gray-800">{value}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
 
               {/* Diagnosa */}
-              <div className="mb-6 avoid-page-break bg-sage-100/50 p-4 rounded-lg border border-sage-300">
-                <h3 className="text-base font-bold text-sage-900 mb-2">Diagnosa Kerusakan:</h3>
-                <p className="text-sm text-sage-900 whitespace-pre-wrap">{formData.diagnosis || '-'}</p>
+              <div className="mb-6 avoid-page-break">
+                <h3 className="text-base font-bold text-gray-900 mb-1">Diagnosa Kerusakan:</h3>
+                <p className="text-sm text-gray-800 whitespace-pre-wrap">{formData.diagnosis || '-'}</p>
               </div>
 
               {/* Hasil Pengecekan */}
-              <div className="mb-6 avoid-page-break bg-sage-100/50 p-4 rounded-lg border border-sage-300">
-                <h3 className="text-base font-bold text-sage-900 mb-2">Hasil Pengecekan:</h3>
-                <p className="text-sm text-sage-900 whitespace-pre-wrap">{formData.checkingResult || '-'}</p>
+              <div className="mb-6 avoid-page-break">
+                <h3 className="text-base font-bold text-gray-900 mb-1">Hasil Pengecekan:</h3>
+                <p className="text-sm text-gray-800 whitespace-pre-wrap">{formData.checkingResult || '-'}</p>
               </div>
 
               {/* Tabel Pengukuran */}
-              <div className="mb-6 avoid-page-break">
-                <table className="w-full text-sm border-collapse border border-sage-300 text-center">
+              <div className="mb-8 avoid-page-break">
+                <table className="w-full text-sm border-collapse border border-gray-400 text-center">
                   <thead>
-                    <tr className="bg-sage-700 text-white">
-                      <th className="border border-sage-300 p-2 text-left">Data Pengukuran</th>
-                      <th className="border border-sage-300 p-2">Satuan</th>
-                      <th className="border border-sage-300 p-2">Referensi</th>
-                      <th className="border border-sage-300 p-2">Data Before</th>
-                      <th className="border border-sage-300 p-2">Data After</th>
+                    <tr className="bg-gray-100 text-gray-900">
+                      <th className="border border-gray-400 p-2 text-left">Data Pengukuran</th>
+                      <th className="border border-gray-400 p-2">Satuan</th>
+                      <th className="border border-gray-400 p-2">Referensi</th>
+                      <th className="border border-gray-400 p-2">Data Before</th>
+                      <th className="border border-gray-400 p-2">Data After</th>
                     </tr>
                   </thead>
-                  <tbody className="font-mono text-xs">
+                  <tbody className="font-mono text-xs text-gray-800">
                     {measurements.map(m => (
-                      <tr key={m.id} className="odd:bg-sage-100/30">
-                        <td className="border border-sage-300 p-2 text-left font-sans">{m.parameter || '-'}</td>
-                        <td className="border border-sage-300 p-2">{m.unit || '-'}</td>
-                        <td className="border border-sage-300 p-2">{m.reference || '-'}</td>
-                        <td className="border border-sage-300 p-2">{m.before || '-'}</td>
-                        <td className="border border-sage-300 p-2 font-bold">{m.after || '-'}</td>
+                      <tr key={m.id}>
+                        <td className="border border-gray-400 p-2 text-left font-sans">{m.parameter || '-'}</td>
+                        <td className="border border-gray-400 p-2">{m.unit || '-'}</td>
+                        <td className="border border-gray-400 p-2">{m.reference || '-'}</td>
+                        <td className="border border-gray-400 p-2">{m.before || '-'}</td>
+                        <td className="border border-gray-400 p-2 font-bold text-gray-900">{m.after || '-'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -398,15 +398,15 @@ function App() {
               </div>
 
               {/* Countermeasure */}
-              <div className="mb-8 avoid-page-break bg-sage-300/30 p-4 rounded-lg border border-sage-500">
-                <h3 className="text-base font-bold text-sage-900 mb-2">Countermeasure / Langkah Perbaikan:</h3>
-                <p className="text-sm text-sage-900 whitespace-pre-wrap">{formData.countermeasure || '-'}</p>
+              <div className="mb-8 avoid-page-break">
+                <h3 className="text-base font-bold text-gray-900 mb-1">Countermeasure / Langkah Perbaikan:</h3>
+                <p className="text-sm text-gray-800 whitespace-pre-wrap">{formData.countermeasure || '-'}</p>
               </div>
 
               {/* Footer */}
-              <div className="mt-12 text-xs text-sage-500 text-right border-t border-sage-300 pt-4 avoid-page-break flex justify-between">
+              <div className="mt-12 text-xs text-gray-500 text-right border-t border-gray-300 pt-4 avoid-page-break flex justify-between">
                 <span>Generated via Service Report App</span>
-                <span>No Laporan: <strong className="text-sage-900">{formData.reportNumber}</strong> | Cetak: {new Date().toLocaleDateString('id-ID')}</span>
+                <span>No Laporan: <strong className="text-gray-900">{formData.reportNumber}</strong> | Cetak: {new Date().toLocaleDateString('id-ID')}</span>
               </div>
             </div>
           </div>
