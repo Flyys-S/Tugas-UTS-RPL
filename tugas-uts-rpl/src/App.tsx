@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 import { Sun, Moon, Plus, Trash2, ArrowLeft, Download, FileText } from 'lucide-react';
 import './index.css';
 
@@ -129,45 +127,10 @@ function App() {
     setShowPreview(false);
   };
 
-  const downloadPDF = async () => {
-    const previewElement = previewRef.current;
-    if (!previewElement) return;
-
-    const wasDark = document.documentElement.classList.contains('dark');
-    if (wasDark) document.documentElement.classList.remove('dark');
-
-    try {
-      // Tunggu sebentar agar transisi mode light selesai dan dirender
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      const canvas = await html2canvas(previewElement, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff'
-      });
-
-      const imgData = canvas.toDataURL('image/jpeg', 0.98);
-      
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      // Mengkalkulasi tinggi gambar di PDF berdasarkan rasio canvas
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`Service-Report-${formData.reportNumber || '0000'}.pdf`);
-
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      alert("Maaf, terjadi kesalahan saat membuat PDF.");
-    } finally {
-      if (wasDark) document.documentElement.classList.add('dark');
-    }
+  const downloadPDF = () => {
+    // Gunakan fitur native Print browser untuk membuat PDF
+    // Ini adalah cara paling stabil dan menghasilkan teks vector yang tajam
+    window.print();
   };
 
   const InputLabel = ({ htmlFor, children, required }: { htmlFor: string, children: React.ReactNode, required?: boolean }) => (
@@ -348,20 +311,20 @@ function App() {
         {/* ===== PREVIEW SECTION ===== */}
         {showPreview && (
           <div className="p-8 bg-sage-100 dark:bg-sage-950 border-t-4 border-sage-500">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 no-print">
               <h2 className="text-2xl font-bold text-sage-900 dark:text-white">📄 Preview Report</h2>
               <div className="flex gap-3">
                 <button onClick={backToForm} className="flex items-center gap-2 bg-sage-700 hover:bg-sage-900 text-white py-2 px-4 rounded-lg font-medium transition-colors">
                   <ArrowLeft size={18} /> Edit Data
                 </button>
                 <button onClick={downloadPDF} className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium shadow-md transition-colors">
-                  <Download size={18} /> Download PDF
+                  <Download size={18} /> Cetak / Save PDF
                 </button>
               </div>
             </div>
             
             {/* PDF Content Area */}
-            <div className="bg-white text-black p-10 rounded-xl shadow-md mx-auto" style={{ maxWidth: '210mm' }} ref={previewRef}>
+            <div id="printable-area" className="bg-white text-black p-10 rounded-xl shadow-md mx-auto" style={{ maxWidth: '210mm' }} ref={previewRef}>
               <div className="text-center text-3xl font-bold mb-8 text-sage-900 uppercase tracking-wide border-b-2 border-sage-300 pb-4">
                 Service Report Detail
               </div>

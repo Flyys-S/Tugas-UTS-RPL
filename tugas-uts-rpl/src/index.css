@@ -19,8 +19,33 @@
   }
 }
 
-/* Custom styles specific to jsPDF printing to override any issues */
+/* Custom styles for native browser printing */
 @media print {
+  /* Sembunyikan elemen yang tidak perlu dicetak */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Sembunyikan warna background dark/light mode agar teksnya hitam di atas kertas putih */
+  body {
+    background-color: white !important;
+  }
+
+  /* Hanya tampilkan area preview */
+  #printable-area, #printable-area * {
+    visibility: visible;
+  }
+  
+  #printable-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none !important;
+  }
+
   .no-print {
     display: none !important;
   }
