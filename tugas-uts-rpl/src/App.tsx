@@ -142,7 +142,6 @@ function App() {
           <div className="nav-label">Menu</div>
           <button className={`nav-item ${currentPage === 'service-report' ? 'active' : ''}`} onClick={() => navigateTo('service-report')}><span className="nav-icon">📋</span><span>Service Report</span></button>
           <button className={`nav-item ${currentPage === 'riwayat' ? 'active' : ''}`} onClick={() => navigateTo('riwayat')}><span className="nav-icon">📁</span><span>Riwayat</span></button>
-          <button className="nav-item"><span className="nav-icon">🔧</span><span>Unit</span></button>
           <button className={`nav-item ${currentPage === 'customer' ? 'active' : ''}`} onClick={() => navigateTo('customer')}><span className="nav-icon">👤</span><span>Customer</span></button>
         </nav>
         <div className="sidebar-footer">
