@@ -178,10 +178,10 @@ function App() {
                 <div><div className="card-title text-sage-900 dark:text-white">Informasi Unit</div><div className="card-desc text-sage-500">Model dan serial number perangkat</div></div>
               </div>
               <div className="form-grid col-4">
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Model Indoor Unit</label><input type="text" id="indoorModel" value={formData.indoorModel} onChange={handleChange} className={inputCls} placeholder="FXQ20BY14" /></div>
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Serial Number Indoor</label><input type="text" id="indoorSerial" value={formData.indoorSerial} onChange={handleChange} className={inputCls} placeholder="E000580" /></div>
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Model Outdoor Unit</label><input type="text" id="outdoorModel" value={formData.outdoorModel} onChange={handleChange} className={inputCls} placeholder="RXQ20BY14" /></div>
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Serial Number Outdoor</label><input type="text" id="outdoorSerial" value={formData.outdoorSerial} onChange={handleChange} className={inputCls} placeholder="E000580" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Model Indoor Unit</label><input type="text" id="indoorModel" value={formData.indoorModel} onChange={handleChange} className={inputCls} placeholder="Masukkan model indoor" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Serial Number Indoor</label><input type="text" id="indoorSerial" value={formData.indoorSerial} onChange={handleChange} className={inputCls} placeholder="Masukkan serial number" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Model Outdoor Unit</label><input type="text" id="outdoorModel" value={formData.outdoorModel} onChange={handleChange} className={inputCls} placeholder="Masukkan model outdoor" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Serial Number Outdoor</label><input type="text" id="outdoorSerial" value={formData.outdoorSerial} onChange={handleChange} className={inputCls} placeholder="Masukkan serial number" /></div>
               </div>
             </div>
 
@@ -194,7 +194,7 @@ function App() {
               <div className="form-grid col-4">
                 <div className="form-group relative">
                   <label className="form-label text-sage-700 dark:text-sage-300">Nama Customer</label>
-                  <input type="text" id="customerName" value={formData.customerName} onChange={(e) => { handleChange(e); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} className={inputCls} placeholder="Ketik untuk cari..." autoComplete="off" />
+                  <input type="text" id="customerName" value={formData.customerName} onChange={(e) => { handleChange(e); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} className={inputCls} placeholder="Ketik nama customer..." autoComplete="off" />
                   {showSuggestions && customerSuggestions.length > 0 && (
                     <div className="autocomplete-dropdown bg-white dark:bg-sage-900 border-[1.5px] border-sage-300 dark:border-sage-700">
                       {customerSuggestions.map(c => (
@@ -206,9 +206,9 @@ function App() {
                     </div>
                   )}
                 </div>
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Alamat</label><input type="text" id="address" value={formData.address} onChange={handleChange} className={inputCls} placeholder="South Jakarta Office" /></div>
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Nama Teknisi</label><input type="text" id="technicianName" value={formData.technicianName} onChange={handleChange} className={inputCls} placeholder="Iwan Saputra" /></div>
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">No Laporan</label><input type="text" id="reportNumber" value={formData.reportNumber} onChange={handleChange} className={inputCls} placeholder="00133772" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Alamat</label><input type="text" id="address" value={formData.address} onChange={handleChange} className={inputCls} placeholder="Masukkan alamat lengkap" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Nama Teknisi</label><input type="text" id="technicianName" value={formData.technicianName} onChange={handleChange} className={inputCls} placeholder="Masukkan nama teknisi" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">No Laporan</label><input type="text" id="reportNumber" value={formData.reportNumber} onChange={handleChange} className={inputCls} placeholder="Masukkan no laporan" /></div>
               </div>
             </div>
 
@@ -219,13 +219,21 @@ function App() {
                 <div><div className="card-title text-sage-900 dark:text-white">Detail Kerusakan</div><div className="card-desc text-sage-500">Error code dan penyebab kerusakan</div></div>
               </div>
               <div className="form-grid col-4">
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Error Code</label><input type="text" id="errorCode" value={formData.errorCode} onChange={handleChange} className={inputCls} placeholder="U7" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Error Code</label><input type="text" id="errorCode" value={formData.errorCode} onChange={handleChange} className={inputCls} placeholder="Masukkan kode error" /></div>
                 <div className="form-group">
                   <label className="form-label text-sage-700 dark:text-sage-300">Cause of Failure</label>
                   <select id="failureCause" value={formData.failureCause} onChange={handleChange} className={inputCls + " cursor-pointer"}>
                     <option value="" disabled>Pilih penyebab...</option>
-                    <option value="46. KABEL ANTARA PCB TIDAK TERHUBUNG DENGAN BAIK">46. Kabel antara PCB tidak terhubung</option>
-                    <option value="726. Konektor Kabel Listrik, Kabel [Komponen Listrik]">726. Konektor Kabel Listrik</option>
+                    <option value="Kabel antara PCB tidak terhubung dengan baik">Kabel antara PCB tidak terhubung</option>
+                    <option value="Konektor kabel listrik bermasalah">Konektor kabel listrik bermasalah</option>
+                    <option value="Kompresor rusak / overheat">Kompresor rusak / overheat</option>
+                    <option value="Kebocoran freon / refrigerant">Kebocoran freon / refrigerant</option>
+                    <option value="Motor fan indoor mati / lemah">Motor fan indoor mati / lemah</option>
+                    <option value="Motor fan outdoor mati / lemah">Motor fan outdoor mati / lemah</option>
+                    <option value="Sensor suhu (thermistor) rusak">Sensor suhu (thermistor) rusak</option>
+                    <option value="PCB Control Error">PCB Control Error</option>
+                    <option value="Pipa kapiler tersumbat">Pipa kapiler tersumbat</option>
+                    <option value="Kapasitor lemah / rusak">Kapasitor lemah / rusak</option>
                     <option value="Lainnya">Lainnya</option>
                   </select>
                 </div>
@@ -238,7 +246,7 @@ function App() {
                     <option value="Auto">🔄 Auto</option>
                   </select>
                 </div>
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Setting Temp (°C)</label><input type="text" id="setTemp" value={formData.setTemp} onChange={handleChange} className={inputCls} placeholder="17" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Setting Temp (°C)</label><input type="text" id="setTemp" value={formData.setTemp} onChange={handleChange} className={inputCls} placeholder="Suhu (°C)" /></div>
               </div>
             </div>
 
