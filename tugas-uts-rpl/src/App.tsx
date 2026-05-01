@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Sun, Moon, Plus, Trash2, ArrowLeft, Download, FileText } from 'lucide-react';
-import { ServiceReportPDF } from './components/ServiceReportPDF';
 import './index.css';
 
 interface MeasurementData {
@@ -129,7 +127,10 @@ function App() {
     setShowPreview(false);
   };
 
-
+  const downloadPDF = () => {
+    // Menggunakan fitur native Print browser
+    window.print();
+  };
 
   const InputLabel = ({ htmlFor, children, required }: { htmlFor: string, children: React.ReactNode, required?: boolean }) => (
     <label htmlFor={htmlFor} className="block text-sm font-semibold text-sage-900 dark:text-sage-100 mb-1">
@@ -312,21 +313,12 @@ function App() {
             <div className="flex justify-between items-center mb-6 no-print">
               <h2 className="text-2xl font-bold text-sage-900 dark:text-white">📄 Preview Report</h2>
               <div className="flex gap-3">
-                <button onClick={backToForm} className="flex items-center gap-2 bg-sage-700 hover:bg-sage-900 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                <button onClick={backToForm} className="flex items-center gap-2 bg-sage-700 hover:bg-sage-900 text-white py-2 px-4 rounded-lg font-medium transition-colors print:hidden">
                   <ArrowLeft size={18} /> Edit Data
                 </button>
-                <PDFDownloadLink
-                  document={<ServiceReportPDF formData={formData} measurements={measurements} />}
-                  fileName={`Service-Report-${formData.reportNumber || '0000'}.pdf`}
-                  className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium shadow-md transition-colors"
-                >
-                  {({ loading }) => (
-                    <>
-                      <Download size={18} />
-                      {loading ? 'Membuat PDF...' : 'Download PDF'}
-                    </>
-                  )}
-                </PDFDownloadLink>
+                <button onClick={downloadPDF} className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium shadow-md transition-colors print:hidden">
+                  <Download size={18} /> Cetak / Save PDF
+                </button>
               </div>
             </div>
             
