@@ -1,17 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Sun, Moon, Plus, Trash2, ArrowLeft, Download, FileText } from 'lucide-react';
 import './index.css';
-
-interface MeasurementData {
-  id: string; parameter: string; unit: string; reference: string; before: string; after: string;
-}
-
-interface FormData {
-  indoorModel: string; indoorSerial: string; outdoorModel: string; outdoorSerial: string;
-  customerName: string; address: string; technicianName: string; reportNumber: string;
-  errorCode: string; failureCause: string; operationMode: string; setTemp: string;
-  diagnosis: string; checkingResult: string; countermeasure: string; reportDate: string;
-}
+import type { MeasurementData, FormData, SavedReport, Page } from './types';
+import { getAllReports, saveReport } from './storage';
+import Riwayat from './components/Riwayat';
+import ReportModal from './components/ReportModal';
 
 const initialMeasurements: MeasurementData[] = [
   { id: '1', parameter: 'Voltage (R-S)', unit: 'V', reference: '380-410V', before: '-', after: '405 Volt' },
@@ -39,6 +32,15 @@ function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [formError, setFormError] = useState('');
   const previewRef = useRef<HTMLDivElement>(null);
+
+  // Navigation & History
+  const [currentPage, setCurrentPage] = useState<Page>('service-report');
+  const [savedReports, setSavedReports] = useState<SavedReport[]>([]);
+  const [viewingReport, setViewingReport] = useState<SavedReport | null>(null);
+  const [toast, setToast] = useState('');
+
+  const refreshReports = () => setSavedReports(getAllReports());
+  useEffect(() => { refreshReports(); }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);
@@ -77,9 +79,28 @@ function App() {
       return;
     }
     setFormError('');
+    // Auto-save ke storage
+    const report: SavedReport = {
+      id: Date.now().toString(),
+      formData: { ...formData },
+      measurements: [...measurements],
+      createdAt: new Date().toISOString(),
+    };
+    saveReport(report);
+    refreshReports();
+    setToast('✅ Laporan tersimpan ke riwayat!');
+    setTimeout(() => setToast(''), 3000);
     setShowPreview(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const navigateTo = (page: Page) => {
+    setCurrentPage(page);
+    setShowPreview(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const pageTitle = currentPage === 'riwayat' ? 'Riwayat Laporan' : 'Service Report Generator';
 
   const todayStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -100,8 +121,8 @@ function App() {
         </div>
         <nav className="sidebar-nav">
           <div className="nav-label">Menu</div>
-          <button className="nav-item active"><span className="nav-icon">📋</span><span>Service Report</span></button>
-          <button className="nav-item"><span className="nav-icon">📁</span><span>Riwayat</span></button>
+          <button className={`nav-item ${currentPage === 'service-report' ? 'active' : ''}`} onClick={() => navigateTo('service-report')}><span className="nav-icon">📋</span><span>Service Report</span></button>
+          <button className={`nav-item ${currentPage === 'riwayat' ? 'active' : ''}`} onClick={() => navigateTo('riwayat')}><span className="nav-icon">📁</span><span>Riwayat</span></button>
           <button className="nav-item"><span className="nav-icon">🔧</span><span>Unit</span></button>
           <button className="nav-item"><span className="nav-icon">👤</span><span>Customer</span></button>
         </nav>
@@ -117,9 +138,9 @@ function App() {
         <header className="topbar bg-white dark:bg-sage-900 border-b-[1.5px] border-sage-300 dark:border-sage-800 print:hidden">
           <div>
             <h1 className="page-title text-sage-900 dark:text-white">
-              Service Report Generator <span className="page-title-tag">MMS</span>
+              {pageTitle} <span className="page-title-tag">MMS</span>
             </h1>
-            <p className="page-subtitle text-sage-500">Buat laporan servis AC profesional dalam hitungan detik</p>
+            <p className="page-subtitle text-sage-500">{currentPage === 'riwayat' ? 'Lihat dan kelola semua laporan servis' : 'Buat laporan servis AC profesional dalam hitungan detik'}</p>
           </div>
           <div className="topbar-right">
             <div className="date-badge bg-sage-50 dark:bg-sage-800 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-700 dark:text-sage-200">{todayStr}</div>
@@ -130,7 +151,7 @@ function App() {
         </header>
 
         {/* ===== FORM SECTION ===== */}
-        {!showPreview && (
+        {currentPage === 'service-report' && !showPreview && (
           <section className="form-section">
 
             {formError && (
@@ -250,7 +271,7 @@ function App() {
         )}
 
         {/* ===== PREVIEW SECTION ===== */}
-        {showPreview && (
+        {currentPage === 'service-report' && showPreview && (
           <section className="preview-section">
             <div className="preview-topbar bg-white dark:bg-sage-900 border-[1.5px] border-sage-300 dark:border-sage-800 no-print">
               <div>
@@ -328,7 +349,18 @@ function App() {
             </div>
           </section>
         )}
+
+        {/* ===== RIWAYAT PAGE ===== */}
+        {currentPage === 'riwayat' && (
+          <Riwayat reports={savedReports} onRefresh={refreshReports} onViewDetail={setViewingReport} />
+        )}
       </main>
+
+      {/* Toast */}
+      {toast && <div className="toast bg-sage-700 text-white">{toast}</div>}
+
+      {/* Modal */}
+      {viewingReport && <ReportModal report={viewingReport} onClose={() => setViewingReport(null)} />}
     </div>
   );
 }
