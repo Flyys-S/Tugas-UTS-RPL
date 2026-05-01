@@ -1,13 +1,7 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
-// Constants for color palette
-const SAGE_900 = '#23352c';
-const SAGE_700 = '#3a5a40';
-const SAGE_500 = '#588157';
-const SAGE_300 = '#a3b18a';
-
-// Create styles
+// Create styles for a plain, formal, black-and-white report
 const styles = StyleSheet.create({
   page: {
     padding: 40,
@@ -17,87 +11,106 @@ const styles = StyleSheet.create({
     lineHeight: 1.5,
   },
   headerContainer: {
-    borderBottomWidth: 2,
-    borderBottomColor: SAGE_300,
+    borderBottomWidth: 1,
+    borderBottomColor: '#000000',
     paddingBottom: 10,
     marginBottom: 20,
   },
   headerText: {
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
-    color: SAGE_900,
+    color: '#000000',
     textTransform: 'uppercase',
     fontFamily: 'Helvetica-Bold',
+    letterSpacing: 1,
   },
   sectionTitle: {
     fontSize: 11,
     fontFamily: 'Helvetica-Bold',
-    color: SAGE_900,
+    color: '#000000',
     marginBottom: 5,
+    textTransform: 'uppercase',
   },
   infoTable: {
     display: 'flex',
     flexDirection: 'column',
     marginBottom: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#000000',
+    borderLeftWidth: 1,
+    borderLeftColor: '#000000',
+    borderRightWidth: 1,
+    borderRightColor: '#000000',
   },
   infoRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: '#eeeeee',
-    paddingVertical: 5,
+    borderBottomColor: '#000000',
   },
   infoLabel: {
     width: '35%',
     fontFamily: 'Helvetica-Bold',
-    color: SAGE_900,
+    color: '#000000',
+    padding: 5,
+    backgroundColor: '#f5f5f5',
+    borderRightWidth: 1,
+    borderRightColor: '#000000',
   },
   infoValue: {
     width: '65%',
-    color: '#333333',
+    color: '#000000',
+    padding: 5,
   },
   box: {
-    backgroundColor: '#f5f7f5',
-    padding: 12,
-    borderRadius: 4,
+    padding: 10,
     borderWidth: 1,
-    borderColor: SAGE_300,
+    borderColor: '#000000',
     marginBottom: 20,
+    minHeight: 60,
   },
   boxText: {
     fontSize: 10,
+    color: '#000000',
   },
   measurementTable: {
     display: 'flex',
     flexDirection: 'column',
     borderWidth: 1,
-    borderColor: SAGE_300,
+    borderColor: '#000000',
     marginBottom: 20,
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: SAGE_700,
-    color: '#ffffff',
+    backgroundColor: '#f5f5f5',
+    borderBottomWidth: 1,
+    borderBottomColor: '#000000',
   },
   tableRow: {
     flexDirection: 'row',
-    borderTopWidth: 1,
-    borderTopColor: SAGE_300,
+    borderBottomWidth: 1,
+    borderBottomColor: '#000000',
   },
-  tableRowEven: {
-    backgroundColor: '#f9faf9',
+  tableRowLast: {
+    borderBottomWidth: 0,
   },
   tableColHeader: {
     padding: 6,
     fontFamily: 'Helvetica-Bold',
+    color: '#000000',
+    borderRightWidth: 1,
+    borderRightColor: '#000000',
   },
   tableCol: {
     padding: 6,
+    color: '#000000',
+    borderRightWidth: 1,
+    borderRightColor: '#000000',
   },
   colParam: { width: '30%' },
   colUnit: { width: '15%', textAlign: 'center' },
   colRef: { width: '20%', textAlign: 'center' },
   colBefore: { width: '15%', textAlign: 'center' },
-  colAfter: { width: '20%', textAlign: 'center' },
+  colAfter: { width: '20%', textAlign: 'center', borderRightWidth: 0 },
   footer: {
     position: 'absolute',
     bottom: 30,
@@ -106,10 +119,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderTopWidth: 1,
-    borderTopColor: SAGE_300,
+    borderTopColor: '#000000',
     paddingTop: 10,
     fontSize: 8,
-    color: '#666666',
+    color: '#000000',
   }
 });
 
@@ -200,7 +213,7 @@ export const ServiceReportPDF: React.FC<Props> = ({ formData, measurements }) =>
             <Text style={[styles.tableColHeader, styles.colAfter]}>Data After</Text>
           </View>
           {measurements.map((m, i) => (
-            <View key={m.id} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowEven : {}]} wrap={false}>
+            <View key={m.id} style={[styles.tableRow, i === measurements.length - 1 ? styles.tableRowLast : {}]} wrap={false}>
               <Text style={[styles.tableCol, styles.colParam]}>{m.parameter || '-'}</Text>
               <Text style={[styles.tableCol, styles.colUnit]}>{m.unit || '-'}</Text>
               <Text style={[styles.tableCol, styles.colRef]}>{m.reference || '-'}</Text>
@@ -211,7 +224,7 @@ export const ServiceReportPDF: React.FC<Props> = ({ formData, measurements }) =>
         </View>
 
         {/* Countermeasure */}
-        <View style={[styles.box, { backgroundColor: '#eef2ee', borderColor: SAGE_500 }]} wrap={false}>
+        <View style={styles.box} wrap={false}>
           <Text style={styles.sectionTitle}>Countermeasure / Langkah Perbaikan:</Text>
           <Text style={styles.boxText}>{formData.countermeasure || '-'}</Text>
         </View>
