@@ -33,7 +33,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./tugas-uts-rpl
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Build
         working-directory: ./tugas-uts-rpl
