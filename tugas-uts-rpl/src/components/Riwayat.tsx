@@ -65,13 +65,13 @@ export default function Riwayat({ reports, onRefresh, onViewDetail }: Props) {
     // Build rekap HTML and print
     const rekapHTML = `
       <div style="font-family:'Outfit',sans-serif;padding:40px;color:#1a1a1a;">
-        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #588157;padding-bottom:16px;margin-bottom:24px;">
-          <div><div style="font-size:22px;font-weight:800;color:#3a5a40;">Mitra Maju Sejati</div><div style="font-size:12px;color:#888;">Rekap Laporan Service</div></div>
-          <div style="background:#588157;color:white;font-size:20px;font-weight:800;padding:8px 16px;border-radius:10px;">MMS</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #0077b6;padding-bottom:16px;margin-bottom:24px;">
+          <div><div style="font-size:22px;font-weight:800;color:#023e8a;">Mitra Maju Sejati</div><div style="font-size:12px;color:#888;">Rekap Laporan Service</div></div>
+          <div style="background:#0077b6;color:white;font-size:20px;font-weight:800;padding:8px 16px;border-radius:10px;">MMS</div>
         </div>
         <div style="text-align:center;font-size:16px;font-weight:700;margin-bottom:20px;">REKAP LAPORAN — ${getPeriodLabel(period).toUpperCase()}</div>
         <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <thead><tr style="background:#3a5a40;color:white;">
+          <thead><tr style="background:#023e8a;color:white;">
             <th style="padding:8px 10px;text-align:left;">No</th>
             <th style="padding:8px 10px;text-align:left;">Tanggal</th>
             <th style="padding:8px 10px;text-align:left;">No Laporan</th>
@@ -81,7 +81,7 @@ export default function Riwayat({ reports, onRefresh, onViewDetail }: Props) {
             <th style="padding:8px 10px;text-align:left;">Error</th>
           </tr></thead>
           <tbody>${filtered.map((r, i) => `
-            <tr style="border-bottom:1px solid #dde5da;${i % 2 === 0 ? 'background:#f4f7f2;' : ''}">
+            <tr style="border-bottom:1px solid #c8ddf0;${i % 2 === 0 ? 'background:#e8f1fa;' : ''}">
               <td style="padding:7px 10px;">${i + 1}</td>
               <td style="padding:7px 10px;">${new Date(r.createdAt).toLocaleDateString('id-ID')}</td>
               <td style="padding:7px 10px;">${r.formData.reportNumber}</td>
@@ -92,7 +92,7 @@ export default function Riwayat({ reports, onRefresh, onViewDetail }: Props) {
             </tr>`).join('')}
           </tbody>
         </table>
-        <div style="margin-top:24px;padding-top:12px;border-top:1.5px solid #dde5da;font-size:11px;color:#888;display:flex;justify-content:space-between;">
+        <div style="margin-top:24px;padding-top:12px;border-top:1.5px solid #c8ddf0;font-size:11px;color:#888;display:flex;justify-content:space-between;">
           <span>Total: ${filtered.length} laporan</span>
           <span>Dicetak: ${new Date().toLocaleDateString('id-ID')}</span>
         </div>

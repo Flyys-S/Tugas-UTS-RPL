@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Sun, Moon, Plus, Trash2, ArrowLeft, Download, FileText } from 'lucide-react';
+import { Sun, Moon, Plus, Trash2, ArrowLeft, Download, FileText, Menu } from 'lucide-react';
 import './index.css';
 import type { MeasurementData, FormData, SavedReport, Customer, Page } from './types';
 import { getAllReports, saveReport, getAllCustomers, ensureCustomer } from './storage';
@@ -57,6 +57,7 @@ function App() {
   const [toast, setToast] = useState('');
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const refreshReports = async () => setSavedReports(await getAllReports());
   const refreshCustomers = async () => setCustomers(await getAllCustomers());
@@ -114,6 +115,7 @@ function App() {
   const navigateTo = (page: Page) => {
     setCurrentPage(page);
     setShowPreview(false);
+    setIsSidebarOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -131,7 +133,8 @@ function App() {
     <div className="min-h-screen bg-sage-100 dark:bg-sage-950 text-sage-900 dark:text-sage-50 transition-colors duration-300 print:bg-white">
 
       {/* ===== SIDEBAR ===== */}
-      <aside className="sidebar print:hidden">
+      <div className={`sidebar-overlay ${isSidebarOpen ? 'show' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+      <aside className={`sidebar print:hidden ${isSidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-logo">
           <div className="logo-badge">MMS</div>
           <div className="logo-text">
@@ -155,11 +158,16 @@ function App() {
 
         {/* TOPBAR */}
         <header className="topbar bg-white dark:bg-sage-900 border-b-[1.5px] border-sage-300 dark:border-sage-800 print:hidden">
-          <div>
-            <h1 className="page-title text-sage-900 dark:text-white">
-              {pageTitle} <span className="page-title-tag">MMS</span>
-            </h1>
-            <p className="page-subtitle text-sage-500">{pageDesc}</p>
+          <div className="flex items-center gap-2">
+            <button className="mobile-menu-btn text-sage-700 dark:text-sage-200" onClick={() => setIsSidebarOpen(true)}>
+              <Menu size={22} />
+            </button>
+            <div>
+              <h1 className="page-title text-sage-900 dark:text-white">
+                {pageTitle} <span className="page-title-tag">MMS</span>
+              </h1>
+              <p className="page-subtitle text-sage-500">{pageDesc}</p>
+            </div>
           </div>
           <div className="topbar-right">
             <div className="date-badge bg-sage-50 dark:bg-sage-800 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-700 dark:text-sage-200">{todayStr}</div>
@@ -266,7 +274,7 @@ function App() {
                     {measurements.map(m => (
                       <tr key={m.id} className="border-b border-sage-200 dark:border-sage-800/50">
                         <td className="text-xs font-semibold text-sage-600 dark:text-sage-400 max-w-[120px] whitespace-normal">{m.category}</td>
-                        <td className="w-48"><input type="text" value={m.parameter} onChange={e => handleMeasurementChange(m.id, 'parameter', e.target.value)} className="measure-input bg-sage-50 dark:bg-sage-900 border-transparent text-sage-700 dark:text-sage-300 pointer-events-none" readOnly /></td>
+                        <td className="w-48"><input type="text" value={m.parameter} onChange={e => handleMeasurementChange(m.id, 'parameter', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500" /></td>
                         <td className="w-24"><input type="text" value={m.unit} onChange={e => handleMeasurementChange(m.id, 'unit', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 text-center focus:border-sage-500" /></td>
                         <td className="w-32"><textarea value={m.reference} onChange={e => handleMeasurementChange(m.id, 'reference', e.target.value)} className="measure-input form-textarea bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500 !min-h-[40px] py-1 text-xs" /></td>
                         <td className="w-28"><input type="text" value={m.before} onChange={e => handleMeasurementChange(m.id, 'before', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500" /></td>
