@@ -4,6 +4,7 @@
 
 export interface MeasurementData {
   id: string;
+  category: string;
   parameter: string;
   unit: string;
   reference: string;
@@ -19,13 +20,21 @@ export interface FormData {
   customerName: string;
   address: string;
   technicianName: string;
+  technicianCodeBranch: string;
   reportNumber: string;
   errorCode: string;
   failureCause: string;
+  placeOfFailure: string;
   operationMode: string;
   setTemp: string;
+  fanSpeed: string;
+  statusOperation: string;
+  installationDate: string;
+  deliveryDate: string;
+  endDate: string;
   diagnosis: string;
   checkingResult: string;
+  sparePartDamage: string;
   countermeasure: string;
   reportDate: string;
 }

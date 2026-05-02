@@ -8,23 +8,39 @@ import ReportModal from './components/ReportModal';
 import CustomerPage from './components/Customer';
 
 const initialMeasurements: MeasurementData[] = [
-  { id: '1', parameter: 'Voltage (R-S)', unit: 'V', reference: '380-410V', before: '', after: '' },
-  { id: '2', parameter: 'Voltage (S-T)', unit: 'V', reference: '380-410V', before: '', after: '' },
-  { id: '3', parameter: 'Voltage (R-T)', unit: 'V', reference: '380-410V', before: '', after: '' },
-  { id: '4', parameter: 'Ampere Total', unit: 'A', reference: '-', before: '', after: '' },
-  { id: '5', parameter: 'Ampere Comp', unit: 'A', reference: '-', before: '', after: '' },
-  { id: '6', parameter: 'Pipa Discharge', unit: '°C', reference: '+20-25°C', before: '', after: '' },
-  { id: '7', parameter: 'Pipa Hisap', unit: '°C', reference: '+2-8°C', before: '', after: '' },
-  { id: '8', parameter: 'Low Pressure', unit: 'Mpa', reference: '0.5-1.1', before: '', after: '' },
-  { id: '9', parameter: 'High Pressure', unit: 'Mpa', reference: '2.1-3.3', before: '', after: '' }
+  { id: '1.0', category: 'Kelistrikan / Electricity', parameter: '1.0. Voltage (220-240V)', unit: 'V', reference: 'Drop Voltage ± 10%', before: '', after: '' },
+  { id: '1.1', category: 'Kelistrikan / Electricity', parameter: '1.1. Voltage - (R - S) (380 - 410 V)', unit: 'V', reference: 'unbalance ± 2%', before: '', after: '' },
+  { id: '1.2', category: 'Kelistrikan / Electricity', parameter: '1.2. Voltage - (S - T) (380 - 410 V)', unit: 'V', reference: 'unbalance ± 2%', before: '', after: '' },
+  { id: '1.3', category: 'Kelistrikan / Electricity', parameter: '1.3. Voltage - (R - T) (380 - 410 V)', unit: 'V', reference: 'unbalance ± 2%', before: '', after: '' },
+  { id: '1.4', category: 'Kelistrikan / Electricity', parameter: '1.4. Ampere Total', unit: 'A', reference: '', before: '', after: '' },
+  { id: '1.5', category: 'Kelistrikan / Electricity', parameter: '1.5. Ampere Comp', unit: 'A', reference: '', before: '', after: '' },
+  
+  { id: '2.1', category: 'Suhu / Temperature', parameter: '2.1. Temperatur Evaporator (TE)', unit: '°C', reference: 'Factory Setting 6°C', before: '', after: '' },
+  { id: '2.2', category: 'Suhu / Temperature', parameter: '2.2. Temperature Kondensor (TC)', unit: '°C', reference: 'Temperatur Ambient + 15 hingga 20°C', before: '', after: '' },
+  { id: '2.3', category: 'Suhu / Temperature', parameter: '2.3. Pipa Discharge', unit: '°C', reference: 'Temperatur kondensor + 20 hingga 25°C', before: '', after: '' },
+  { id: '2.4', category: 'Suhu / Temperature', parameter: '2.4. Pipa Hisap (Suction)', unit: '°C', reference: 'Temperatur Evaporator + 2 hingga 8°C', before: '', after: '' },
+  { id: '2.5', category: 'Suhu / Temperature', parameter: '2.5. Inlet Outdoor Air', unit: '°C', reference: '', before: '', after: '' },
+  { id: '2.6', category: 'Suhu / Temperature', parameter: '2.6. Outlet Outdoor Air', unit: '°C', reference: '', before: '', after: '' },
+  { id: 'dt-out', category: 'Suhu / Temperature', parameter: 'Δ T (Outlet - Inlet)', unit: '°C', reference: 'Temp Return + 12 s.d 18', before: '', after: '' },
+  { id: '2.7', category: 'Suhu / Temperature', parameter: '2.7. Inlet Indoor Air', unit: '°C', reference: '', before: '', after: '' },
+  { id: '2.8', category: 'Suhu / Temperature', parameter: '2.8. Outlet Indoor Air', unit: '°C', reference: '', before: '', after: '' },
+  { id: 'dt-in', category: 'Suhu / Temperature', parameter: 'Δ T (Outlet - Inlet)', unit: '°C', reference: 'Temp Return + 7 s.d 13', before: '', after: '' },
+  { id: '2.9', category: 'Suhu / Temperature', parameter: '2.9. Ambient Temp', unit: '°C', reference: '35 - 40 (tergantung Model)', before: '', after: '' },
+
+  { id: '3.1-l', category: 'Tekanan / Presure', parameter: '3.1. Sebelum - Low', unit: 'Mpag/psig', reference: 'Sama dengan tekanan Saturasi Temperatur ambient', before: '', after: '' },
+  { id: '3.1-h', category: 'Tekanan / Presure', parameter: '3.1. Sebelum - High', unit: 'Mpag/psig', reference: '', before: '', after: '' },
+  { id: '3.2-l', category: 'Tekanan / Presure', parameter: '3.2. Saat Beroperasi - Low', unit: 'Mpag/psig', reference: '0,5 - 1.1 Mpag\n72,6 - 159,5 psig', before: '', after: '' },
+  { id: '3.2-h', category: 'Tekanan / Presure', parameter: '3.2. Saat Beroperasi - High', unit: 'Mpag/psig', reference: '<5 HP\n2.1 - 3.3 Mpa\n304,5 - 478,6 psig', before: '', after: '' },
 ];
 
 function App() {
   const [formData, setFormData] = useState<FormData>({
     indoorModel: '', indoorSerial: '', outdoorModel: '', outdoorSerial: '',
-    customerName: '', address: '', technicianName: '', reportNumber: '',
-    errorCode: '', failureCause: '',
-    operationMode: '', setTemp: '', diagnosis: '', checkingResult: '',
+    customerName: '', address: '', technicianName: '', technicianCodeBranch: '', reportNumber: '',
+    errorCode: '', failureCause: '', placeOfFailure: '',
+    operationMode: '', setTemp: '', fanSpeed: '', statusOperation: '',
+    installationDate: '', deliveryDate: '', endDate: '',
+    diagnosis: '', checkingResult: '', sparePartDamage: '',
     countermeasure: '', reportDate: new Date().toISOString().split('T')[0]
   });
 
@@ -59,14 +75,6 @@ function App() {
 
   const handleMeasurementChange = (id: string, field: keyof MeasurementData, value: string) => {
     setMeasurements(prev => prev.map(m => m.id === id ? { ...m, [field]: value } : m));
-  };
-
-  const addMeasurementRow = () => {
-    setMeasurements(prev => [...prev, { id: Date.now().toString(), parameter: '', unit: '', reference: '', before: '', after: '' }]);
-  };
-
-  const removeMeasurementRow = (id: string) => {
-    setMeasurements(prev => prev.filter(m => m.id !== id));
   };
 
   const generateReport = async () => {
@@ -208,7 +216,11 @@ function App() {
                 </div>
                 <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Alamat</label><input type="text" id="address" value={formData.address} onChange={handleChange} className={inputCls} placeholder="Masukkan alamat lengkap" /></div>
                 <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Nama Teknisi</label><input type="text" id="technicianName" value={formData.technicianName} onChange={handleChange} className={inputCls} placeholder="Masukkan nama teknisi" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Kode Teknisi/Cabang</label><input type="text" id="technicianCodeBranch" value={formData.technicianCodeBranch} onChange={handleChange} className={inputCls} placeholder="Masukkan kode teknisi/cabang" /></div>
                 <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">No Laporan</label><input type="text" id="reportNumber" value={formData.reportNumber} onChange={handleChange} className={inputCls} placeholder="Masukkan no laporan" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Installation Date</label><input type="text" id="installationDate" value={formData.installationDate} onChange={handleChange} className={inputCls} placeholder="Misal: 15 April 2026" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Delivery Date</label><input type="text" id="deliveryDate" value={formData.deliveryDate} onChange={handleChange} className={inputCls} placeholder="Misal: 01 January 1999" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">End Date</label><input type="text" id="endDate" value={formData.endDate} onChange={handleChange} className={inputCls} placeholder="Misal: 15 April 2026" /></div>
               </div>
             </div>
 
@@ -220,23 +232,8 @@ function App() {
               </div>
               <div className="form-grid col-4">
                 <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Error Code</label><input type="text" id="errorCode" value={formData.errorCode} onChange={handleChange} className={inputCls} placeholder="Masukkan kode error" /></div>
-                <div className="form-group">
-                  <label className="form-label text-sage-700 dark:text-sage-300">Cause of Failure</label>
-                  <select id="failureCause" value={formData.failureCause} onChange={handleChange} className={inputCls + " cursor-pointer"}>
-                    <option value="" disabled>Pilih penyebab...</option>
-                    <option value="Kabel antara PCB tidak terhubung dengan baik">Kabel antara PCB tidak terhubung</option>
-                    <option value="Konektor kabel listrik bermasalah">Konektor kabel listrik bermasalah</option>
-                    <option value="Kompresor rusak / overheat">Kompresor rusak / overheat</option>
-                    <option value="Kebocoran freon / refrigerant">Kebocoran freon / refrigerant</option>
-                    <option value="Motor fan indoor mati / lemah">Motor fan indoor mati / lemah</option>
-                    <option value="Motor fan outdoor mati / lemah">Motor fan outdoor mati / lemah</option>
-                    <option value="Sensor suhu (thermistor) rusak">Sensor suhu (thermistor) rusak</option>
-                    <option value="PCB Control Error">PCB Control Error</option>
-                    <option value="Pipa kapiler tersumbat">Pipa kapiler tersumbat</option>
-                    <option value="Kapasitor lemah / rusak">Kapasitor lemah / rusak</option>
-                    <option value="Lainnya">Lainnya</option>
-                  </select>
-                </div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Cause of Failure</label><input type="text" id="failureCause" value={formData.failureCause} onChange={handleChange} className={inputCls} placeholder="46. KABEL ANTARA PCB..." /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Place of Failure</label><input type="text" id="placeOfFailure" value={formData.placeOfFailure} onChange={handleChange} className={inputCls} placeholder="726. Konektor Kabel Listrik..." /></div>
                 <div className="form-group">
                   <label className="form-label text-sage-700 dark:text-sage-300">Mode Operasi</label>
                   <select id="operationMode" value={formData.operationMode} onChange={handleChange} className={inputCls + " cursor-pointer"}>
@@ -247,6 +244,8 @@ function App() {
                   </select>
                 </div>
                 <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Setting Temp (°C)</label><input type="text" id="setTemp" value={formData.setTemp} onChange={handleChange} className={inputCls} placeholder="Suhu (°C)" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Fan Speed</label><input type="text" id="fanSpeed" value={formData.fanSpeed} onChange={handleChange} className={inputCls} placeholder="Misal: High" /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Status Operation</label><input type="text" id="statusOperation" value={formData.statusOperation} onChange={handleChange} className={inputCls} placeholder="Status operasi" /></div>
               </div>
             </div>
 
@@ -254,27 +253,24 @@ function App() {
             <div className="dash-card bg-white dark:bg-sage-900 border-[1.5px] border-sage-300 dark:border-sage-800">
               <div className="card-header border-b-[1.5px] border-sage-100 dark:border-sage-800">
                 <div className="card-icon bg-sage-50 dark:bg-sage-800 border-[1.5px] border-sage-200 dark:border-sage-700">📊</div>
-                <div className="flex-1"><div className="card-title text-sage-900 dark:text-white">Tabel Pengukuran</div><div className="card-desc text-sage-500">Data pengukuran sebelum dan sesudah perbaikan</div></div>
-                <button onClick={addMeasurementRow} className="flex items-center gap-1 text-sm bg-sage-200 hover:bg-sage-500 hover:text-white text-sage-800 dark:bg-sage-800 dark:hover:bg-sage-700 dark:text-sage-300 py-1.5 px-3 rounded-lg transition-colors font-semibold">
-                  <Plus size={16} /> Tambah Baris
-                </button>
+                <div className="flex-1"><div className="card-title text-sage-900 dark:text-white">Tabel Pengukuran</div><div className="card-desc text-sage-500">Data pengukuran berdasarkan standar form</div></div>
               </div>
               <div className="overflow-x-auto">
                 <table className="measure-form-table">
                   <thead>
                     <tr className="bg-sage-200 dark:bg-sage-800 text-sage-800 dark:text-sage-200">
-                      <th className="rounded-tl-lg">Parameter</th><th>Satuan</th><th>Referensi</th><th>Before</th><th>After</th><th className="rounded-tr-lg w-12">Aksi</th>
+                      <th className="rounded-tl-lg">Kategori</th><th>Parameter</th><th>Satuan</th><th>Referensi</th><th>Before</th><th className="rounded-tr-lg">After</th>
                     </tr>
                   </thead>
                   <tbody>
                     {measurements.map(m => (
                       <tr key={m.id} className="border-b border-sage-200 dark:border-sage-800/50">
-                        <td><input type="text" value={m.parameter} onChange={e => handleMeasurementChange(m.id, 'parameter', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500" /></td>
-                        <td className="w-20"><input type="text" value={m.unit} onChange={e => handleMeasurementChange(m.id, 'unit', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 text-center focus:border-sage-500" /></td>
-                        <td className="w-28"><input type="text" value={m.reference} onChange={e => handleMeasurementChange(m.id, 'reference', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500" /></td>
+                        <td className="text-xs font-semibold text-sage-600 dark:text-sage-400 max-w-[120px] whitespace-normal">{m.category}</td>
+                        <td className="w-48"><input type="text" value={m.parameter} onChange={e => handleMeasurementChange(m.id, 'parameter', e.target.value)} className="measure-input bg-sage-50 dark:bg-sage-900 border-transparent text-sage-700 dark:text-sage-300 pointer-events-none" readOnly /></td>
+                        <td className="w-24"><input type="text" value={m.unit} onChange={e => handleMeasurementChange(m.id, 'unit', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 text-center focus:border-sage-500" /></td>
+                        <td className="w-32"><textarea value={m.reference} onChange={e => handleMeasurementChange(m.id, 'reference', e.target.value)} className="measure-input form-textarea bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500 !min-h-[40px] py-1 text-xs" /></td>
                         <td className="w-28"><input type="text" value={m.before} onChange={e => handleMeasurementChange(m.id, 'before', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500" /></td>
                         <td className="w-28"><input type="text" value={m.after} onChange={e => handleMeasurementChange(m.id, 'after', e.target.value)} className="measure-input bg-white dark:bg-sage-950 border-[1.5px] border-sage-300 dark:border-sage-700 text-sage-900 dark:text-sage-100 focus:border-sage-500" /></td>
-                        <td className="text-center"><button onClick={() => removeMeasurementRow(m.id)} className="measure-delete-btn text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30"><Trash2 size={17} /></button></td>
                       </tr>
                     ))}
                   </tbody>
@@ -288,10 +284,11 @@ function App() {
                 <div className="card-icon bg-sage-50 dark:bg-sage-800 border-[1.5px] border-sage-200 dark:border-sage-700">📝</div>
                 <div><div className="card-title text-sage-900 dark:text-white">Catatan Teknisi</div><div className="card-desc text-sage-500">Diagnosis, hasil pengecekan, dan langkah perbaikan</div></div>
               </div>
-              <div className="form-grid col-3">
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Diagnosis / Kerusakan</label><textarea id="diagnosis" value={formData.diagnosis} onChange={handleChange} className={textareaCls} placeholder="Cek unit lantai 2 ruang rapat..." /></div>
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Checking Result</label><textarea id="checkingResult" value={formData.checkingResult} onChange={handleChange} className={textareaCls} placeholder="Sudah di ganti kabel control..." /></div>
-                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Countermeasure</label><textarea id="countermeasure" value={formData.countermeasure} onChange={handleChange} className={textareaCls} placeholder="Saat ini unit sudah running..." /></div>
+              <div className="form-grid col-2">
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Faulty Diagnosis / Diagnosa Kerusakan</label><textarea id="diagnosis" value={formData.diagnosis} onChange={handleChange} className={textareaCls} placeholder="Cek unit lantai 2 ruang rapat..." /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Checking Result / Hasil Pengecekan</label><textarea id="checkingResult" value={formData.checkingResult} onChange={handleChange} className={textareaCls} placeholder="Sudah di ganti kabel control..." /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Data Pengukuran Spare part Rusak</label><textarea id="sparePartDamage" value={formData.sparePartDamage} onChange={handleChange} className={textareaCls} placeholder="Komponen yang rusak..." /></div>
+                <div className="form-group"><label className="form-label text-sage-700 dark:text-sage-300">Countermeasure / Langkah Perbaikan</label><textarea id="countermeasure" value={formData.countermeasure} onChange={handleChange} className={textareaCls} placeholder="Saat ini unit sudah running..." /></div>
               </div>
             </div>
 
